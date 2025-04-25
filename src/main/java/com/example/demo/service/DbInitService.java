@@ -59,63 +59,64 @@ public class DbInitService implements CommandLineRunner {
         // 只有当会议室表为空时才初始化数据
         if (roomRepository.count() == 0) {
             initRooms();
+            System.out.println("Rooms initialized successfully.");
         }
     }
 
     private void initRooms() {
         // 创建会议室 A
         Room roomA = new Room();
-        roomA.setName("会议室 A");
-        roomA.setLocation("主楼一层");
+        roomA.setName("Room A");
+        roomA.setLocation("SA869");
         roomA.setCapacity(10);
         roomA.setImageUrl("/images/rooms/room-a.jpg");
-        roomA.setDescription("适合小型会议和讨论");
-        roomA.setFacilities(new HashSet<>(Arrays.asList("投影仪", "WiFi", "白板")));
+        roomA.setDescription("Suitable for small meetings and discussions");
+        roomA.setFacilities(new HashSet<>(Arrays.asList("Projector", "WiFi", "Whiteboard")));
 
         // 创建会议室 B
         Room roomB = new Room();
-        roomB.setName("会议室 B");
-        roomB.setLocation("主楼一层");
+        roomB.setName("Room B");
+        roomB.setLocation("SB814");
         roomB.setCapacity(20);
         roomB.setImageUrl("/images/rooms/room-b.jpg");
-        roomB.setDescription("配备投影仪和音响系统");
-        roomB.setFacilities(new HashSet<>(Arrays.asList("投影仪", "WiFi", "白板", "音响系统")));
+        roomB.setDescription("Equipped with projector and sound system");
+        roomB.setFacilities(new HashSet<>(Arrays.asList("Projector", "WiFi", "Whiteboard", "Speaker System")));
 
         // 创建会议室 C
         Room roomC = new Room();
-        roomC.setName("会议室 C");
-        roomC.setLocation("主楼二层");
+        roomC.setName("Room C");
+        roomC.setLocation("SC854");
         roomC.setCapacity(30);
         roomC.setImageUrl("/images/rooms/room-c.jpg");
-        roomC.setDescription("适合中型会议和演讲");
-        roomC.setFacilities(new HashSet<>(Arrays.asList("投影仪", "WiFi", "白板", "音响系统", "视频会议设备")));
+        roomC.setDescription("Suitable for medium-sized conferences and speeches");
+        roomC.setFacilities(new HashSet<>(Arrays.asList("Projector", "WiFi", "Whiteboard", "Speaker System", "Video Conferencing Equipment")));
 
         // 创建会议室 D
         Room roomD = new Room();
-        roomD.setName("会议室 D");
-        roomD.setLocation("主楼二层");
+        roomD.setName("Room D");
+        roomD.setLocation("SD876");
         roomD.setCapacity(50);
         roomD.setImageUrl("/images/rooms/room-d.jpg");
-        roomD.setDescription("大型会议室，配备完整的多媒体系统");
-        roomD.setFacilities(new HashSet<>(Arrays.asList("投影仪", "WiFi", "白板", "音响系统", "视频会议设备", "舞台")));
+        roomD.setDescription("Large conference room equipped with a complete multimedia system");
+        roomD.setFacilities(new HashSet<>(Arrays.asList("Projector", "WiFi", "Whiteboard", "Speaker System", "Video Conferencing Equipment", "Stage")));
 
         // 创建会议室 E
         Room roomE = new Room();
-        roomE.setName("会议室 E");
-        roomE.setLocation("附楼一层");
+        roomE.setName("Room E");
+        roomE.setLocation("EE810");
         roomE.setCapacity(15);
         roomE.setImageUrl("/images/rooms/room-e.jpg");
-        roomE.setDescription("安静舒适，适合小组讨论");
-        roomE.setFacilities(new HashSet<>(Arrays.asList("投影仪", "WiFi", "白板")));
+        roomE.setDescription("Quiet and comfortable, suitable for group discussions");
+        roomE.setFacilities(new HashSet<>(Arrays.asList("Projector", "WiFi", "Whiteboard")));
 
         // 创建会议室 F
         Room roomF = new Room();
-        roomF.setName("会议室 F");
-        roomF.setLocation("附楼二层");
+        roomF.setName("Room F");
+        roomF.setLocation("EB814");
         roomF.setCapacity(25);
         roomF.setImageUrl("/images/rooms/room-f.jpg");
-        roomF.setDescription("配备白板和演示设备");
-        roomF.setFacilities(new HashSet<>(Arrays.asList("投影仪", "WiFi", "白板", "音响系统")));
+        roomF.setDescription("Equipped with whiteboard and demonstration equipment");
+        roomF.setFacilities(new HashSet<>(Arrays.asList("Projector", "WiFi", "Whiteboard", "Speaker System")));
 
         // 保存所有会议室
         List<Room> rooms = Arrays.asList(roomA, roomB, roomC, roomD, roomE, roomF);

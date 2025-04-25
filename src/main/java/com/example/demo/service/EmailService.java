@@ -27,9 +27,9 @@ public class EmailService {
         helper.setTo(to);
         helper.setSubject("Email Verification");
         
-        String content = "<p>请点击下面的链接验证您的邮箱：</p>"
-                + "<a href='http://121.40.73.249:8080/verify-email.html?token=" + token + "'>验证邮箱</a>";
-        
+        String content = "<p>Please click on the link below to verify your email:</p>"
+                + "<a href='http://localhost:8080/verify-email.html?token=" + token + "'>Verify email</a>";
+        //localhost:8080; 121.40.73.249:8080
         helper.setText(content, true);
         
         mailSender.send(message);
@@ -44,8 +44,8 @@ public class EmailService {
         helper.setSubject("Password Reset Request");
         
         String content = "<p>Please click the link below to reset your password:</p>"
-                + "<a href='http://121.40.73.249:8080/reset-password.html?token=" + token + "'>Reset Password</a>";
-        
+                + "<a href='http://localhost:8080/reset-password.html?token=" + token + "'>Reset Password</a>";
+        //localhost:8080; 121.40.73.249:8080
         helper.setText(content, true);
         
         mailSender.send(message);

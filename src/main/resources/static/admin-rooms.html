@@ -165,35 +165,35 @@
                             <div class="facilities-container">
                             <div class="facilities-checkboxes" id="facilitiesContainer">
                                 <div class="checkbox-item">
-                                    <input type="checkbox" id="facility-projector" name="facilities" value="投影仪">
-                                    <label for="facility-projector">投影仪</label>
+                                    <input type="checkbox" id="facility-projector" name="facilities" value="Projector">
+                                    <label for="facility-projector">Projector</label>
                                 </div>
                                 <div class="checkbox-item">
-                                    <input type="checkbox" id="facility-whiteboard" name="facilities" value="白板">
-                                    <label for="facility-whiteboard">白板</label>
+                                    <input type="checkbox" id="facility-whiteboard" name="facilities" value="Whiteboard">
+                                    <label for="facility-whiteboard">Whiteboard</label>
                                 </div>
                                 <div class="checkbox-item">
                                     <input type="checkbox" id="facility-wifi" name="facilities" value="WiFi">
                                     <label for="facility-wifi">WiFi</label>
                                 </div>
                                 <div class="checkbox-item">
-                                    <input type="checkbox" id="facility-audio" name="facilities" value="音响系统">
-                                    <label for="facility-audio">音响系统</label>
+                                    <input type="checkbox" id="facility-audio" name="facilities" value="Speaker System">
+                                    <label for="facility-audio">Speaker System</label>
                                 </div>
                                 <div class="checkbox-item">
-                                    <input type="checkbox" id="facility-video" name="facilities" value="视频会议设备">
-                                    <label for="facility-video">视频会议设备</label>
+                                    <input type="checkbox" id="facility-video" name="facilities" value="Video Conferencing Equipment">
+                                    <label for="facility-video">Video Conferencing Equipment</label>
                                 </div>
                                 <div class="checkbox-item">
-                                    <input type="checkbox" id="facility-stage" name="facilities" value="舞台">
-                                    <label for="facility-stage">舞台</label>
+                                    <input type="checkbox" id="facility-stage" name="facilities" value="Stage">
+                                    <label for="facility-stage">Stage</label>
                                     </div>
                                 </div>
                                 
                                 <!-- 自定义设施区域 -->
                                 <div class="custom-facility-input">
-                                    <input type="text" id="newFacility" placeholder="添加其他设施...">
-                                    <button type="button" id="addFacilityBtn">添加</button>
+                                    <input type="text" id="newFacility" placeholder="Add Facility">
+                                    <button type="button" id="addFacilityBtn">Add Facility</button>
                                 </div>
                                 
                                 <div class="custom-facilities" id="customFacilitiesContainer">
@@ -301,7 +301,7 @@
             // 检查是否已存在该设施
             const existingFacilities = getAllSelectedFacilities();
             if (existingFacilities.includes(facilityText)) {
-                alert('此设施已添加');
+                alert('This facility has been added');
                 return;
             }
             
@@ -312,7 +312,7 @@
             facilityTag.innerHTML = `
                 <input type="hidden" name="custom-facilities" value="${facilityText}">
                 ${facilityText}
-                <span class="remove-facility" title="移除">&times;</span>
+                <span class="remove-facility" title="Remove">&times;</span>
             `;
             
             // 添加移除设施的事件
@@ -456,7 +456,7 @@
             document.getElementById('customFacilitiesContainer').innerHTML = '';
             
             // 设置设施复选框
-            const standardFacilities = ['投影仪', '白板', 'WiFi', '音响系统', '视频会议设备', '舞台'];
+            const standardFacilities = ['Projector', 'Whiteboard', 'WiFi', 'Speaker System', 'Video Conferencing Equipment', 'Stage'];
             const customFacilities = room.facilities.filter(f => !standardFacilities.includes(f));
             
             // 重置所有复选框
@@ -477,7 +477,7 @@
                 facilityTag.innerHTML = `
                     <input type="hidden" name="custom-facilities" value="${facility}">
                     ${facility}
-                    <span class="remove-facility" title="移除">&times;</span>
+                    <span class="remove-facility" title="remove">&times;</span>
                 `;
                 
                 // 添加移除设施的事件

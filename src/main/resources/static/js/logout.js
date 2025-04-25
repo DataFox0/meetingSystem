@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            console.log('退出登录');
+            console.log('Log Out');
             
             // 清除认证信息
             localStorage.removeItem('token');
