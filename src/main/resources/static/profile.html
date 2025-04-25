@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Meeting Reservation System</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .profile-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .profile-section {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .profile-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 3px solid #ddd;
+            background-color: #f8f8f8;
+        }
+        
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .profile-data {
+            width: 100%;
+        }
+        
+        .profile-item {
+            display: flex;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .profile-item .label {
+            flex: 0 0 120px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .profile-item .value {
+            flex: 1;
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            height: 40px;
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 5px;
+            width: 400px;
+            max-width: 80%;
+        }
+        
+        .modal-header {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: black;
+        }
+        
+        /* 添加加载中动画 */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 2s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>My Profile</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="user-dashboard.html">Dashboard</a></li>
+                    <li><a href="meeting-rooms.html">Meeting Rooms</a></li>
+                    <li><a href="my-reservations.html">My Reservations</a></li>
+                    <li><a href="profile.html" class="active">Profile</a></li>
+                    <li><a href="#" id="logoutBtn">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <div class="profile-container">
+                <section class="profile-section card">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <img id="userAvatar" src="images/default-avatar.jpg" alt="User Avatar">
+                        </div>
+                        <h2>Personal Information</h2>
+                    </div>
+                    
+                    <div class="profile-data">
+                        <div class="profile-item">
+                            <span class="label">Student ID:</span>
+                            <span id="studentId" class="value"></span>
+                        </div>
+                        <div class="profile-item">
+                            <span class="label">Username:</span>
+                            <span id="username" class="value"></span>
+                        </div>
+                        <div class="profile-item">
+                            <span class="label">Email:</span>
+                            <span id="email" class="value"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <a href="edit-profile.html" class="btn btn-center">Edit Profile</a>
+                        <button id="deleteAccountBtn" class="btn btn-danger btn-center">Delete Account</button>
+                    </div>
+                </section>
+                
+                <section class="reservation-stats card">
+                    <h2>Reservation Statistics</h2>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <h3>Total Reservations</h3>
+                            <span id="totalReservations" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <h3>Upcoming Reservations</h3>
+                            <span id="upcomingReservations" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <h3>Past Reservations</h3>
+                            <span id="pastReservations" class="stat-value">0</span>
+                        </div>
+                    </div>
+                    <a href="my-reservations.html" class="btn">View All Reservations</a>
+                </section>
+            </div>
+            
+            <!-- Delete Account Confirmation Modal -->
+            <div id="deleteAccountModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <span class="close">&times;</span>
+                        <h2>Confirm Account Deletion</h2>
+                    </div>
+                    <p>Are you sure you want to delete your account? This action cannot be undone and all your reservations will be cancelled.</p>
+                    <div class="modal-actions">
+                        <button id="cancelDeleteBtn" class="btn btn-secondary">Cancel</button>
+                        <button id="confirmDeleteBtn" class="btn btn-danger">Delete Account</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 加载中动画 -->
+            <div class="loading-overlay" id="loadingOverlay">
+                <div class="loading-spinner"></div>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Meeting Reservation System</p>
+        </footer>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/nav-bar.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 加载用户资料
+            loadUserProfile();
+            
+            // 删除账号相关事件
+            const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+            const deleteAccountModal = document.getElementById('deleteAccountModal');
+            const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+            const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+            const closeButtons = document.querySelectorAll('.close');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            
+            // 打开删除账号确认模态框
+            deleteAccountBtn.addEventListener('click', function() {
+                deleteAccountModal.style.display = 'block';
+            });
+            
+            // 关闭模态框
+            cancelDeleteBtn.addEventListener('click', function() {
+                deleteAccountModal.style.display = 'none';
+            });
+            
+            closeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    deleteAccountModal.style.display = 'none';
+                });
+            });
+            
+            // 确认删除账号
+            confirmDeleteBtn.addEventListener('click', function() {
+                // 显示加载中动画
+                loadingOverlay.style.display = 'flex';
+                deleteAccountModal.style.display = 'none';
+                
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    alert('You are not logged in. Please log in and try again.');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                fetch('/api/users/account', {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    // 隐藏加载中动画
+                    loadingOverlay.style.display = 'none';
+                    
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Failed to delete account');
+                    }
+                })
+                .then(data => {
+                    alert('Your account has been successfully deleted.');
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('username');
+                    localStorage.removeItem('role');
+                    window.location.href = 'index.html';
+                })
+                .catch(error => {
+                    // 隐藏加载中动画
+                    loadingOverlay.style.display = 'none';
+                    console.error('Error deleting account:', error);
+                    alert('Error: Failed to delete your account. Please try again later.');
+                });
+            });
+            
+            // 点击模态框外部关闭
+            window.addEventListener('click', function(event) {
+                if (event.target === deleteAccountModal) {
+                    deleteAccountModal.style.display = 'none';
+                }
+            });
+        });
+        
+        // 加载用户资料
+        function loadUserProfile() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            fetch('/api/users/profile', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to load profile');
+                }
+                return response.json();
+            })
+            .then(profile => {
+                document.getElementById('username').textContent = profile.username;
+                document.getElementById('email').textContent = profile.email;
+                document.getElementById('studentId').textContent = profile.studentId;
+                
+                // 头像显示 - 确保避免缓存问题
+                if (profile.avatarUrl) {
+                    const avatarImg = document.getElementById('userAvatar');
+                    // 添加时间戳以避免缓存
+                    avatarImg.src = profile.avatarUrl + '?t=' + new Date().getTime();
+                    avatarImg.onerror = function() {
+                        this.src = 'images/default-avatar.jpg';
+                    };
+                }
+                
+                // 这里可以加载预订统计数据
+            })
+            .catch(error => {
+                console.error('Error loading profile:', error);
+                alert('Failed to load profile: ' + error.message);
+            });
+        }
+    </script>
+</body>
+</html> 

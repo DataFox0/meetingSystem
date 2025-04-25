@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Meeting Reservation System</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/admin-styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Admin Dashboard</h1>
+            <nav>
+                <ul>
+                    <li><a href="admin-dashboard.html" class="active">Dashboard</a></li>
+                    <li><a href="admin-rooms.html">Rooms</a></li>
+                    <li><a href="admin-reservations.html">Reservations</a></li>
+                    <li><a href="admin-users.html">Users</a></li>
+                    <li><a href="#" id="logoutBtn">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section class="dashboard-header">
+                <h2>Welcome, <span id="adminName"></span></h2>
+                <p>Here you can manage the meeting reservation system.</p>
+            </section>
+            
+            <section class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-icon">🏢</div>
+                    <div class="stat-value" id="roomCount">0</div>
+                    <div class="stat-label">Total Rooms</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-value" id="reservationCount">0</div>
+                    <div class="stat-label">Active Reservations</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👤</div>
+                    <div class="stat-value" id="userCount">0</div>
+                    <div class="stat-label">Registered Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🔄</div>
+                    <div class="stat-value" id="todayReservationCount">0</div>
+                    <div class="stat-label">Today's Reservations</div>
+                </div>
+            </section>
+            
+            <section class="admin-shortcuts">
+                <div class="shortcut-grid">
+                    <a href="admin-rooms.html" class="shortcut-card">
+                        <h3>Manage Rooms</h3>
+                        <p>Add, edit, or delete meeting rooms</p>
+                    </a>
+                    <a href="admin-reservations.html" class="shortcut-card">
+                        <h3>Manage Reservations</h3>
+                        <p>View and manage user reservations</p>
+                    </a>
+                    <a href="admin-users.html" class="shortcut-card">
+                        <h3>Manage Users</h3>
+                        <p>Lock, unlock, or delete user accounts</p>
+                    </a>
+                </div>
+            </section>
+            
+            <section class="recent-activity">
+                <h3>Recent Activity</h3>
+                <div class="activity-list" id="recentActivityList">
+                    <!-- 活动记录将在这里动态生成 -->
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Meeting Reservation System</p>
+        </footer>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/admin-dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Rooms - Meeting Reservation System</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/room-styles.css">
+    <style>
+        /* 仿照图片2的样式重新设计筛选区域 */
+        .filter-section {
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        /* 页面主标题样式 */
+        .search-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .search-description {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        
+        /* 两列布局 */
+        .filter-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        /* 左侧筛选条件 */
+        .filter-left {
+            flex: 0 0 300px;
+        }
+        
+        /* 右侧筛选条件 */
+        .filter-right {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        /* 筛选项标题 */
+        .filter-heading {
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #444;
+        }
+        
+        /* 位置选择器 */
+        .location-selector {
+            width: 100%;
+            display: flex;
+        }
+        
+        .location-selector select {
+            width: 100%;
+            height: 40px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 0 10px;
+        }
+        
+        /* 人数选择器 */
+        .capacity-selector {
+            width: 100%;
+            display: flex;
+            margin-bottom: 15px;
+        }
+        
+        .capacity-selector input {
+            width: 100%;
+            height: 40px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 0 10px;
+        }
+        
+        /* 设施筛选区域 */
+        .facilities-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .facility-checkbox {
+            display: flex;
+            align-items: center;
+            background-color: #f5f5f5;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        
+        .facility-checkbox:hover {
+            background-color: #eaeaea;
+        }
+        
+        .facility-checkbox input {
+            margin-right: 5px;
+        }
+        
+        /* 按钮区域 */
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .filter-buttons .btn {
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .search-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 40px;
+            padding: 0 20px;
+            border-radius: 4px;
+        }
+        
+        .reset-btn {
+            background-color: #f8f9fa;
+            color: #333;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 40px;
+            padding: 0 20px;
+            border-radius: 4px;
+        }
+        
+        /* 正文区域样式调整 */
+        .rooms-container {
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .filter-container {
+                flex-direction: column;
+            }
+            
+            .filter-left, .filter-right {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Meeting Rooms</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="user-dashboard.html">Dashboard</a></li>
+                    <li><a href="meeting-rooms.html" class="active">Meeting Rooms</a></li>
+                    <li><a href="my-reservations.html">My Reservations</a></li>
+                    <li><a href="profile.html">Profile</a></li>
+                    <li><a href="#" id="logoutBtn">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section class="filter-section card">
+                <h2 class="search-title">Conference Room Search</h2>
+                <p class="search-description">Enter the conditions below to find a suitable meeting room</p>
+                <form id="roomFilterForm">
+                    <div class="filter-container">
+                        <div class="filter-left">
+                            <div class="filter-group">
+                                <div class="filter-heading">Location</div>
+                                <div class="location-selector">
+                                    <select id="location" name="location">
+                                        <option value="">All positions</option>
+                                        <!-- Locations will be loaded dynamically -->
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <div class="filter-heading">Number of people it can accommodate</div>
+                                <div class="capacity-selector">
+                                    <input type="number" id="capacity" name="minCapacity" min="1" value="1" placeholder="Enter number of people">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="filter-right">
+                            <div class="filter-group">
+                                <div class="filter-heading">Facility Requirements</div>
+                                <div class="facilities-container" id="facilitiesContainer">
+                                    <!-- Facilities will be loaded dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-buttons">
+                        <button type="submit" class="search-btn">Search Rooms</button>
+                        <button type="reset" class="reset-btn">Reset</button>
+                    </div>
+                </form>
+            </section>
+            
+            <section class="rooms-container" id="roomsContainer">
+                <!-- Rooms will be loaded dynamically -->
+                <div class="loading">Loading rooms...</div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Meeting Reservation System</p>
+        </footer>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/nav-bar.js"></script>
+    <script src="js/meeting-rooms.js"></script>
+    <script>
+        // 为设施复选框添加样式
+        document.addEventListener('DOMContentLoaded', function() {
+            // 加载设施列表后，添加样式
+            const facilitiesObserver = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.target.id === 'facilitiesContainer' && mutation.addedNodes.length > 0) {
+                        const checkboxes = document.querySelectorAll('#facilitiesContainer input[type="checkbox"]');
+                        checkboxes.forEach(function(checkbox) {
+                            const label = checkbox.parentElement;
+                            if (!label.classList.contains('facility-checkbox')) {
+                                label.classList.add('facility-checkbox');
+                            }
+                        });
+                    }
+                });
+            });
+            
+            const facilitiesContainer = document.getElementById('facilitiesContainer');
+            if (facilitiesContainer) {
+                facilitiesObserver.observe(facilitiesContainer, { childList: true, subtree: true });
+            }
+        });
+    </script>
+</body>
+</html>
