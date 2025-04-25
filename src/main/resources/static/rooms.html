@@ -1,0 +1,789 @@
+            <button class="btn btn-primary" id="applyFiltersBtn">
+              <i class="fas fa-filter"></i> Apply Filters
+            </button>
+            <button class="btn btn-outline-secondary" id="clearFiltersBtn">
+              <i class="fas fa-times"></i> Clear
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 会议室列表 -->
+      <div id="roomsContainer" class="room-grid">
+        <!-- 会议室将通过JavaScript动态加载 -->
+        <div class="loading-spinner">
+          <i class="fas fa-circle-notch fa-spin"></i>
+          <span>Loading meeting rooms...</span>
+        </div>
+      </div>
+    </main>
+  </div>
+  
+  <!-- 预订模态框 -->
+  <div class="modal fade" id="bookingModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Book Meeting Room</h5>
+          <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="bookingForm">
+            <input type="hidden" id="roomId" name="roomId">
+            
+            <div class="form-group">
+              <label for="bookingDate">Date</label>
+              <input type="date" class="form-control" id="bookingDate" name="date" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="timeRange">Time Range</label>
+              <div class="row">
+                <div class="col">
+                  <input type="time" class="form-control" id="startTime" name="startTime" required>
+                </div>
+                <div class="col-auto">to</div>
+                <div class="col">
+                  <input type="time" class="form-control" id="endTime" name="endTime" required>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="purpose">Purpose</label>
+              <textarea class="form-control" id="purpose" name="purpose" rows="2" required
+                        placeholder="Brief description of the meeting"></textarea>
+            </div>
+            
+            <div class="form-group">
+              <label for="attendees">Number of Attendees</label>
+              <input type="number" class="form-control" id="attendees" name="attendees" min="1" required>
+              <div class="form-text" id="capacityHint"></div>
+            </div>
+            
+            <div class="booking-summary">
+              <h6>Booking Summary</h6>
+              <div class="summary-item">
+                <span>Room:</span>
+                <span id="summaryRoom"></span>
+              </div>
+              <div class="summary-item">
+                <span>Date:</span>
+                <span id="summaryDate"></span>
+              </div>
+              <div class="summary-item">
+                <span>Time:</span>
+                <span id="summaryTime"></span>
+              </div>
+              <div class="summary-item">
+                <span>Duration:</span>
+                <span id="summaryDuration"></span>
+              </div>
+            </div>
+            
+            <div id="bookingError" class="alert alert-danger" style="display: none;"></div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="submitBookingBtn">Book Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 详情模态框 -->
+  <div class="modal fade" id="roomDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Room Details</h5>
+          <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- 详情将通过JavaScript动态加载 -->
+          <div class="loading-spinner">
+            <i class="fas fa-circle-notch fa-spin"></i>
+            <span>Loading room details...</span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="bookNowBtn">Book Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Toast通知组件 -->
+  <div class="toast-container">
+    <!-- 通知将通过JavaScript动态添加 -->
+  </div>
+  
+  <script src="js/api.js"></script>
+  <script src="js/auth-storage.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // 检查认证状态
+      const { isAuthenticated, username, role } = authStorage.getAuth();
+      
+      if (!isAuthenticated) {
+        // 如果未认证，重定向到登录页面
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      // 设置用户名
+      document.getElementById('userName').textContent = username;
+      
+      // 设置用户头像的第一个字母或从API加载
+      const userAvatar = document.getElementById('userAvatar');
+      if (!userAvatar.src || userAvatar.src.includes('default-avatar.png')) {
+        const firstLetter = username.charAt(0).toUpperCase();
+        const avatarColors = [
+          '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
+          '#ec4899', '#06b6d4', '#84cc16', '#14b8a6', '#f97316'
+        ];
+        const colorIndex = username.charCodeAt(0) % avatarColors.length;
+        const canvas = document.createElement('canvas');
+        canvas.width = 200;
+        canvas.height = 200;
+        const ctx = canvas.getContext('2d');
+        
+        // 绘制背景
+        ctx.fillStyle = avatarColors[colorIndex];
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // 绘制文字
+        ctx.fillStyle = 'white';
+        ctx.font = 'bold 100px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(firstLetter, canvas.width / 2, canvas.height / 2);
+        
+        // 设置为用户头像
+        userAvatar.src = canvas.toDataURL('image/png');
+      }
+      
+      // 设置登出按钮事件
+      document.getElementById('logoutBtn').addEventListener('click', function() {
+        authStorage.clearAuth();
+        window.location.href = 'login.html';
+      });
+      
+      // 设置日期选择器默认值为当天
+      const today = new Date();
+      const dateFilter = document.getElementById('dateFilter');
+      dateFilter.min = today.toISOString().split('T')[0];
+      dateFilter.value = today.toISOString().split('T')[0];
+      
+      // 视图切换
+      document.getElementById('gridViewBtn').addEventListener('click', function() {
+        this.classList.add('active');
+        document.getElementById('listViewBtn').classList.remove('active');
+        document.getElementById('roomsContainer').className = 'room-grid';
+      });
+      
+      document.getElementById('listViewBtn').addEventListener('click', function() {
+        this.classList.add('active');
+        document.getElementById('gridViewBtn').classList.remove('active');
+        document.getElementById('roomsContainer').className = 'room-list';
+      });
+      
+      // 加载会议室
+      loadRooms();
+      
+      // 应用过滤器
+      document.getElementById('applyFiltersBtn').addEventListener('click', function() {
+        loadRooms(getFilterOptions());
+      });
+      
+      // 清除过滤器
+      document.getElementById('clearFiltersBtn').addEventListener('click', function() {
+        // 重置日期为今天
+        dateFilter.value = today.toISOString().split('T')[0];
+        
+        // 重置时间范围
+        document.getElementById('startTimeFilter').value = '09:00';
+        document.getElementById('endTimeFilter').value = '17:00';
+        
+        // 重置容量
+        document.getElementById('capacityFilter').value = '';
+        
+        // 重置设施
+        document.querySelectorAll('#facilitiesFilterGroup input[type="checkbox"]').forEach(checkbox => {
+          checkbox.checked = false;
+        });
+        
+        // 重新加载会议室
+        loadRooms();
+      });
+      
+      // 设置模态框关闭按钮
+      document.querySelectorAll('.btn-close, [data-dismiss="modal"]').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const modal = this.closest('.modal');
+          closeModal(modal);
+        });
+      });
+      
+      // 设置预订提交按钮
+      document.getElementById('submitBookingBtn').addEventListener('click', function() {
+        submitBooking();
+      });
+      
+      // 为模态框按钮设置事件
+      document.getElementById('bookNowBtn').addEventListener('click', function() {
+        // 从详情模态框转到预订模态框
+        const roomId = this.getAttribute('data-room-id');
+        const roomName = this.getAttribute('data-room-name');
+        
+        closeModal(document.getElementById('roomDetailsModal'));
+        openBookingModal(roomId, roomName);
+      });
+      
+      // 预订日期变更时更新摘要
+      document.getElementById('bookingDate').addEventListener('change', updateBookingSummary);
+      document.getElementById('startTime').addEventListener('change', updateBookingSummary);
+      document.getElementById('endTime').addEventListener('change', updateBookingSummary);
+      
+      // 初始化模态框事件
+      initializeModals();
+    });
+    
+    // 获取过滤选项
+    function getFilterOptions() {
+      const date = document.getElementById('dateFilter').value;
+      const startTime = document.getElementById('startTimeFilter').value;
+      const endTime = document.getElementById('endTimeFilter').value;
+      const capacity = document.getElementById('capacityFilter').value;
+      
+      // 收集选中的设施
+      const facilities = [];
+      document.querySelectorAll('#facilitiesFilterGroup input[type="checkbox"]:checked').forEach(checkbox => {
+        facilities.push(checkbox.value);
+      });
+      
+      return {
+        date,
+        startTime,
+        endTime,
+        capacity,
+        facilities
+      };
+    }
+    
+    // 加载会议室
+    function loadRooms(filters = {}) {
+      const container = document.getElementById('roomsContainer');
+      const { token } = authStorage.getAuth();
+      
+      // 显示加载中
+      container.innerHTML = `
+        <div class="loading-spinner">
+          <i class="fas fa-circle-notch fa-spin"></i>
+          <span>Loading meeting rooms...</span>
+        </div>
+      `;
+      
+      // 准备查询参数
+      let queryParams = new URLSearchParams();
+      
+      if (filters.date) {
+        queryParams.append('date', filters.date);
+      }
+      
+      if (filters.startTime) {
+        queryParams.append('startTime', filters.startTime);
+      }
+      
+      if (filters.endTime) {
+        queryParams.append('endTime', filters.endTime);
+      }
+      
+      if (filters.capacity) {
+        const [min, max] = filters.capacity.split('-');
+        if (min) queryParams.append('minCapacity', min);
+        if (max) queryParams.append('maxCapacity', max);
+      }
+      
+      if (filters.facilities && filters.facilities.length > 0) {
+        filters.facilities.forEach(facility => {
+          queryParams.append('facilities', facility);
+        });
+      }
+      
+      // 调用API获取会议室
+      roomApi.getRooms(token, queryParams)
+        .then(rooms => {
+          if (rooms.length === 0) {
+            container.innerHTML = `
+              <div class="empty-state">
+                <i class="fas fa-door-closed"></i>
+                <h3>No meeting rooms found</h3>
+                <p>Try adjusting your filters or check back later.</p>
+                <button class="btn btn-primary" id="resetFiltersBtn">Reset Filters</button>
+              </div>
+            `;
+            
+            document.getElementById('resetFiltersBtn').addEventListener('click', function() {
+              document.getElementById('clearFiltersBtn').click();
+            });
+            
+            return;
+          }
+          
+          // 当前视图是网格还是列表
+          const isGridView = container.className.includes('grid');
+          
+          let html = '';
+          
+          rooms.forEach(room => {
+            const facilities = formatFacilities(room.facilities);
+            
+            if (isGridView) {
+              // 网格视图
+              html += `
+                <div class="room-card">
+                  <div class="room-image">
+                    <img src="${room.imageUrl || 'img/room-placeholder.jpg'}" alt="${room.name}">
+                    <div class="room-capacity">
+                      <i class="fas fa-user"></i> ${room.capacity}
+                    </div>
+                  </div>
+                  <div class="room-content">
+                    <h3 class="room-name">${room.name}</h3>
+                    <div class="room-location">
+                      <i class="fas fa-map-marker-alt"></i> ${room.location}
+                    </div>
+                    <p class="room-description">${truncateText(room.description, 100)}</p>
+                    <div class="room-facilities">
+                      ${renderFacilityTags(facilities)}
+                    </div>
+                    <div class="room-actions">
+                      <div class="room-availability ${getAvailabilityClass(room.availability)}">
+                        <span class="availability-indicator"></span>
+                        ${getAvailabilityText(room.availability)}
+                      </div>
+                      <div>
+                        <button class="btn btn-outline-secondary btn-sm view-details-btn" data-room-id="${room.id}">
+                          Details
+                        </button>
+                        <button class="btn btn-primary btn-sm book-btn" data-room-id="${room.id}" data-room-name="${room.name}">
+                          Book
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              `;
+            } else {
+              // 列表视图
+              html += `
+                <div class="room-list-item">
+                  <div class="room-list-image">
+                    <img src="${room.imageUrl || 'img/room-placeholder.jpg'}" alt="${room.name}">
+                  </div>
+                  <div class="room-list-content">
+                    <div class="room-list-header">
+                      <h3 class="room-name">${room.name}</h3>
+                      <div class="room-capacity">
+                        <i class="fas fa-user"></i> ${room.capacity}
+                      </div>
+                    </div>
+                    <div class="room-location">
+                      <i class="fas fa-map-marker-alt"></i> ${room.location}
+                    </div>
+                    <p class="room-description">${truncateText(room.description, 150)}</p>
+                    <div class="room-facilities">
+                      ${renderFacilityTags(facilities)}
+                    </div>
+                  </div>
+                  <div class="room-list-actions">
+                    <div class="room-availability ${getAvailabilityClass(room.availability)}">
+                      <span class="availability-indicator"></span>
+                      ${getAvailabilityText(room.availability)}
+                    </div>
+                    <div class="room-action-buttons">
+                      <button class="btn btn-outline-secondary btn-sm view-details-btn" data-room-id="${room.id}">
+                        Details
+                      </button>
+                      <button class="btn btn-primary btn-sm book-btn" data-room-id="${room.id}" data-room-name="${room.name}">
+                        Book
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }
+          });
+          
+          container.innerHTML = html;
+          
+          // 为详情按钮添加事件
+          document.querySelectorAll('.view-details-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+              const roomId = this.getAttribute('data-room-id');
+              openRoomDetailsModal(roomId);
+            });
+          });
+          
+          // 为预订按钮添加事件
+          document.querySelectorAll('.book-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+              const roomId = this.getAttribute('data-room-id');
+              const roomName = this.getAttribute('data-room-name');
+              openBookingModal(roomId, roomName);
+            });
+          });
+        })
+        .catch(error => {
+          console.error('Error loading rooms:', error);
+          container.innerHTML = `
+            <div class="alert alert-danger">
+              <i class="fas fa-exclamation-circle"></i>
+              Failed to load meeting rooms. Please try again later.
+            </div>
+          `;
+        });
+    }
+    
+    // 截断文本，添加省略号
+    function truncateText(text, maxLength) {
+      if (!text) return '';
+      return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+    }
+    
+    // 格式化设施
+    function formatFacilities(facilities) {
+      if (!facilities || facilities.length === 0) return [];
+      
+      const facilityMap = {
+        'PROJECTOR': { name: 'Projector', icon: 'fa-projector' },
+        'WIFI': { name: 'WiFi', icon: 'fa-wifi' },
+        'WHITEBOARD': { name: 'Whiteboard', icon: 'fa-chalkboard' },
+        'VIDEO_CONF': { name: 'Video Conferencing', icon: 'fa-video' },
+        'PHONE': { name: 'Phone', icon: 'fa-phone' },
+        'TV': { name: 'TV', icon: 'fa-tv' },
+        'AIR_CONDITIONING': { name: 'Air Conditioning', icon: 'fa-snowflake' },
+        'REFRESHMENTS': { name: 'Refreshments', icon: 'fa-coffee' }
+      };
+      
+      return facilities.map(facility => {
+        if (facilityMap[facility]) {
+          return {
+            code: facility,
+            name: facilityMap[facility].name,
+            icon: facilityMap[facility].icon
+          };
+        } else {
+          return {
+            code: facility,
+            name: facility.replace('_', ' ').toLowerCase(),
+            icon: 'fa-check'
+          };
+        }
+      });
+    }
+    
+    // 渲染设施标签
+    function renderFacilityTags(facilities) {
+      if (!facilities || facilities.length === 0) return '';
+      
+      return facilities.map(facility => `
+        <div class="facility-tag">
+          <i class="fas ${facility.icon}"></i> ${facility.name}
+        </div>
+      `).join('');
+    }
+    
+    // 获取可用性类名
+    function getAvailabilityClass(availability) {
+      switch (availability) {
+        case 'AVAILABLE':
+          return 'available';
+        case 'BUSY':
+          return 'busy';
+        case 'PARTIALLY_AVAILABLE':
+          return 'partly-available';
+        default:
+          return '';
+      }
+    }
+    
+    // 获取可用性文本
+    function getAvailabilityText(availability) {
+      switch (availability) {
+        case 'AVAILABLE':
+          return 'Available';
+        case 'BUSY':
+          return 'Busy';
+        case 'PARTIALLY_AVAILABLE':
+          return 'Partly Available';
+        default:
+          return 'Unknown';
+      }
+    }
+    
+    // 打开会议室详情模态框
+    function openRoomDetailsModal(roomId) {
+      const modal = document.getElementById('roomDetailsModal');
+      const modalBody = modal.querySelector('.modal-body');
+      const bookNowBtn = document.getElementById('bookNowBtn');
+      const { token } = authStorage.getAuth();
+      
+      // 显示加载中
+      modalBody.innerHTML = `
+        <div class="loading-spinner">
+          <i class="fas fa-circle-notch fa-spin"></i>
+          <span>Loading room details...</span>
+        </div>
+      `;
+      
+      // 打开模态框
+      modal.style.display = 'block';
+      setTimeout(() => {
+        modal.classList.add('show');
+        document.body.classList.add('modal-open');
+      }, 10);
+      
+      // 加载会议室详情
+      roomApi.getRoomDetails(token, roomId)
+        .then(room => {
+          const facilities = formatFacilities(room.facilities);
+          
+          modalBody.innerHTML = `
+            <div class="room-details">
+              <div class="room-detail-image">
+                <img src="${room.imageUrl || 'img/room-placeholder.jpg'}" alt="${room.name}">
+              </div>
+              <div class="room-detail-content">
+                <h3 class="room-name">${room.name}</h3>
+                <div class="room-meta">
+                  <div class="room-meta-item">
+                    <i class="fas fa-user"></i> Capacity: ${room.capacity} people
+                  </div>
+                  <div class="room-meta-item">
+                    <i class="fas fa-map-marker-alt"></i> Location: ${room.location}
+                  </div>
+                </div>
+                <div class="room-description">
+                  <h4>Description</h4>
+                  <p>${room.description || 'No description available.'}</p>
+                </div>
+                <div class="room-facilities-section">
+                  <h4>Facilities</h4>
+                  <div class="room-facilities-detail">
+                    ${renderFacilityTags(facilities)}
+                  </div>
+                </div>
+                <div class="room-availability-section">
+                  <h4>Availability</h4>
+                  <div class="availability-calendar">
+                    <!-- 可用性日历将在后续版本中添加 -->
+                    <p class="text-muted">The detailed availability calendar will be available in the next update.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+          
+          // 设置"立即预订"按钮的房间ID和名称
+          bookNowBtn.setAttribute('data-room-id', room.id);
+          bookNowBtn.setAttribute('data-room-name', room.name);
+        })
+        .catch(error => {
+          console.error('Error loading room details:', error);
+          modalBody.innerHTML = `
+            <div class="alert alert-danger">
+              <i class="fas fa-exclamation-circle"></i>
+              Failed to load room details. Please try again later.
+            </div>
+          `;
+        });
+    }
+    
+    // 打开预订模态框
+    function openBookingModal(roomId, roomName) {
+      const modal = document.getElementById('bookingModal');
+      const form = document.getElementById('bookingForm');
+      const roomIdInput = document.getElementById('roomId');
+      const bookingDateInput = document.getElementById('bookingDate');
+      const startTimeInput = document.getElementById('startTime');
+      const endTimeInput = document.getElementById('endTime');
+      const summaryRoom = document.getElementById('summaryRoom');
+      
+      // 重置表单
+      form.reset();
+      
+      // 设置房间ID和名称
+      roomIdInput.value = roomId;
+      summaryRoom.textContent = roomName;
+      
+      // 设置日期为今天
+      const today = new Date();
+      bookingDateInput.min = today.toISOString().split('T')[0];
+      bookingDateInput.value = today.toISOString().split('T')[0];
+      
+      // 从过滤器获取时间
+      startTimeInput.value = document.getElementById('startTimeFilter').value || '09:00';
+      endTimeInput.value = document.getElementById('endTimeFilter').value || '10:00';
+      
+      // 更新预订摘要
+      updateBookingSummary();
+      
+      // 隐藏错误消息
+      document.getElementById('bookingError').style.display = 'none';
+      
+      // 打开模态框
+      modal.style.display = 'block';
+      setTimeout(() => {
+        modal.classList.add('show');
+        document.body.classList.add('modal-open');
+      }, 10);
+    }
+    
+    // 关闭模态框
+    function closeModal(modal) {
+      modal.classList.remove('show');
+      setTimeout(() => {
+        modal.style.display = 'none';
+        document.body.classList.remove('modal-open');
+      }, 300);
+    }
+    
+    // 更新预订摘要
+    function updateBookingSummary() {
+      const roomName = document.getElementById('summaryRoom').textContent;
+      const bookingDate = document.getElementById('bookingDate').value;
+      const startTime = document.getElementById('startTime').value;
+      const endTime = document.getElementById('endTime').value;
+      
+      document.getElementById('summaryRoom').textContent = roomName;
+      
+      if (bookingDate) {
+        const formattedDate = new Date(bookingDate).toLocaleDateString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+        document.getElementById('summaryDate').textContent = formattedDate;
+      } else {
+        document.getElementById('summaryDate').textContent = 'Not selected';
+      }
+      
+      if (startTime && endTime) {
+        document.getElementById('summaryTime').textContent = `${formatTimeString(startTime)} - ${formatTimeString(endTime)}`;
+        
+        // 计算持续时间
+        const duration = calculateDuration(startTime, endTime);
+        document.getElementById('summaryDuration').textContent = duration;
+      } else {
+        document.getElementById('summaryTime').textContent = 'Not selected';
+        document.getElementById('summaryDuration').textContent = 'N/A';
+      }
+    }
+    
+    // 格式化时间字符串为12小时制
+    function formatTimeString(timeString) {
+      const [hours, minutes] = timeString.split(':');
+      const date = new Date();
+      date.setHours(parseInt(hours, 10));
+      date.setMinutes(parseInt(minutes, 10));
+      
+      return date.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      });
+    }
+    
+    // 计算持续时间
+    function calculateDuration(startTime, endTime) {
+      const [startHours, startMinutes] = startTime.split(':').map(Number);
+      const [endHours, endMinutes] = endTime.split(':').map(Number);
+      
+      let durationMinutes = (endHours * 60 + endMinutes) - (startHours * 60 + startMinutes);
+      
+      // 处理跨越午夜的情况
+      if (durationMinutes < 0) {
+        durationMinutes += 24 * 60;
+      }
+      
+      const hours = Math.floor(durationMinutes / 60);
+      const minutes = durationMinutes % 60;
+      
+      let duration = '';
+      if (hours > 0) {
+        duration += `${hours} hour${hours !== 1 ? 's' : ''}`;
+      }
+      if (minutes > 0) {
+        duration += `${hours > 0 ? ' ' : ''}${minutes} minute${minutes !== 1 ? 's' : ''}`;
+      }
+      
+      return duration || 'N/A';
+    }
+    
+    // 提交预订
+    function submitBooking() {
+      const form = document.getElementById('bookingForm');
+      const roomId = document.getElementById('roomId').value;
+      const date = document.getElementById('bookingDate').value;
+      const startTime = document.getElementById('startTime').value;
+      const endTime = document.getElementById('endTime').value;
+      const purpose = document.getElementById('purpose').value;
+      const attendees = document.getElementById('attendees').value;
+      const errorElement = document.getElementById('bookingError');
+      
+      // 验证表单
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      
+      // 验证时间范围
+      if (startTime >= endTime) {
+        errorElement.textContent = 'End time must be after start time.';
+        errorElement.style.display = 'block';
+        return;
+      }
+      
+      // 显示加载状态
+      const submitBtn = document.getElementById('submitBookingBtn');
+      const originalText = submitBtn.textContent;
+      submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Booking...';
+      submitBtn.disabled = true;
+      
+      // 准备预订数据
+      const bookingData = {
+        roomId,
+        date,
+        startTime,
+        endTime,
+        purpose,
+        attendees
+      };
+      
+      // 调用API创建预订
+      const { token } = authStorage.getAuth();
+      
+      bookingApi.createBooking(token, bookingData)
+        .then(response => {
+          // 关闭模态框
+          closeModal(document.getElementById('bookingModal'));
+          
+          // 显示成功通知
+          showToast('success', 'Booking successful! Your reservation is now pending approval.');
+        })
+        .catch(error => {
+          console.error('Error submitting booking:', error);
+          errorElement.textContent = 'Failed to submit booking. Please try again later.';
+          errorElement.style.display = 'block';
+        })
+        .finally(() => {
+          submitBtn.textContent = originalText;
+          submitBtn.disabled = false;
+        });
+    }
+  </script> 

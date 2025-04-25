@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>验证邮箱 - 会议预约系统</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>邮箱验证</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">首页</a></li>
+                    <li><a href="login.html">登录</a></li>
+                    <li><a href="register.html">注册</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <div class="message-container" id="verificationMessage">
+                <h2>正在验证邮箱...</h2>
+                <p>请稍候，系统正在处理您的验证请求。</p>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 会议预约系统</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            
+            if (!token) {
+                showError('验证链接无效，缺少验证令牌');
+                return;
+            }
+            
+            fetch(`/api/auth/verify-email?token=${token}`)
+                .then(response => {
+                    if (response.ok) {
+                        return response.json().then(data => {
+                            showSuccess(data.message || '邮箱验证成功！您现在可以登录系统了。');
+                        });
+                    } else {
+                        return response.json().then(data => {
+                            showError(data.error || '验证失败，请重试或联系管理员');
+                        });
+                    }
+                })
+                .catch(error => {
+                    showError('验证过程中发生错误，请稍后重试');
+                    console.error(error);
+                });
+        });
+        
+        function showSuccess(message) {
+            const container = document.getElementById('verificationMessage');
+            container.className = 'message-container success';
+            container.innerHTML = `
+                <h2>邮箱验证成功！</h2>
+                <p>${message}</p>
+                <div class="btn-container">
+                    <a href="login.html" class="btn">立即登录</a>
+                </div>
+            `;
+        }
+        
+        function showError(message) {
+            const container = document.getElementById('verificationMessage');
+            container.className = 'message-container error';
+            container.innerHTML = `
+                <h2>验证失败</h2>
+                <p>${message}</p>
+                <div class="btn-container">
+                    <a href="register.html" class="btn">返回注册</a>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html> 

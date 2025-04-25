@@ -1,0 +1,15 @@
+  <span class="status-badge status-${reservation.status.toLowerCase()}">${formatStatus(reservation.status)}</span>
+</td>
+<td>
+  <div class="reservation-actions">
+    <button class="btn btn-outline-primary view-details-btn" data-reservation-id="${reservation.id}">
+      <i class="fas fa-eye"></i> View
+    </button>
+    ${reservation.status === 'PENDING' || reservation.status === 'APPROVED' ? 
+      `<button class="btn btn-outline-danger cancel-btn" data-reservation-id="${reservation.id}">
+        <i class="fas fa-times"></i> Cancel
+      </button>` : ''}
+  </div>
+</td>
+</tr>
+`

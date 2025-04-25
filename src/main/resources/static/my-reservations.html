@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Reservations - Meeting Reservation System</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/room-styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>My Reservations</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="user-dashboard.html">Dashboard</a></li>
+                    <li><a href="meeting-rooms.html">Meeting Rooms</a></li>
+                    <li><a href="my-reservations.html" class="active">My Reservations</a></li>
+                    <li><a href="profile.html">Profile</a></li>
+                    <li><a href="#" id="logoutBtn">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section class="reservations-header card">
+                <h2>Your Meeting Room Reservations</h2>
+                <div class="filter-tabs">
+                    <button class="tab-btn active" data-filter="all">All</button>
+                    <button class="tab-btn" data-filter="upcoming">Upcoming</button>
+                    <button class="tab-btn" data-filter="past">Past</button>
+                    <button class="tab-btn" data-filter="cancelled">Cancelled</button>
+                </div>
+            </section>
+            
+            <section class="reservations-container" id="reservationsContainer">
+                <!-- Reservations will be loaded dynamically -->
+                <div class="loading">Loading your reservations...</div>
+            </section>
+            
+            <!-- Modal for reservation details -->
+            <div id="reservationDetailModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Reservation Details</h2>
+                    <div class="reservation-details">
+                        <div class="detail-item">
+                            <span class="label">Room:</span>
+                            <span id="modal-roomName" class="value"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Location:</span>
+                            <span id="modal-roomLocation" class="value"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Date:</span>
+                            <span id="modal-date" class="value"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Time:</span>
+                            <span id="modal-time" class="value"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Attendees:</span>
+                            <span id="modal-attendees" class="value"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Status:</span>
+                            <span id="modal-status" class="value"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Purpose:</span>
+                            <span id="modal-purpose" class="value"></span>
+                        </div>
+                    </div>
+                    <div class="modal-actions" id="modal-actions">
+                        <!-- Actions will be added dynamically based on reservation status -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Meeting Reservation System</p>
+        </footer>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/my-reservations.js"></script>
+    <script src="js/nav-bar.js"></script>
+</body>
+</html>

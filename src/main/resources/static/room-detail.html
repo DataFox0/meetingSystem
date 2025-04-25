@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Details - Meeting Reservation System</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/room-styles.css">
+    <style>
+        /* 调整Purpose宽度 */
+        .form-group textarea#purpose {
+            width: 100%;
+            resize: vertical;
+        }
+        
+        /* 调整按钮样式 */
+        .form-group .btn-container {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .form-group .btn-container .btn {
+            flex: 1;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Room Details</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="user-dashboard.html">Dashboard</a></li>
+                    <li><a href="meeting-rooms.html">Meeting Rooms</a></li>
+                    <li><a href="my-reservations.html">My Reservations</a></li>
+                    <li><a href="profile.html">Profile</a></li>
+                    <li><a href="#" id="logoutBtn">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section class="room-detail-container">
+                <div class="room-detail-header card">
+                    <div class="room-image">
+                        <img id="roomImage" src="images/default-room.jpg" alt="Room Image">
+                    </div>
+                    <div class="room-info">
+                        <h2 id="roomName"></h2>
+                        <div class="room-meta">
+                            <div class="room-location">
+                                <strong>Location:</strong> <span id="roomLocation"></span>
+                            </div>
+                            <div class="room-capacity">
+                                <strong>Capacity:</strong> <span id="roomCapacity"></span> people
+                            </div>
+                        </div>
+                        <div class="room-facilities">
+                            <h3>Facilities</h3>
+                            <ul id="roomFacilities"></ul>
+                        </div>
+                        <div class="room-description" id="roomDescription"></div>
+                    </div>
+                </div>
+                
+                <div class="reservation-form card">
+                    <h2>Book This Room</h2>
+                    <form id="reservationForm">
+                        <input type="hidden" id="roomId" name="roomId">
+                        
+                        <div class="form-group">
+                            <label for="date">Date</label>
+                            <input type="date" id="date" name="date" required>
+                        </div>
+                        
+                        <div class="time-slot-section">
+                            <h3>Select Time Period</h3>
+                            <p class="form-help">Please select a time period (maximum 3 hours). All times are at the top of the hour.</p>
+                            
+                            <div class="date-tabs">
+                                <div class="date-tab active" id="currentDateTab"></div>
+                                <!-- 日期导航选项卡将动态生成 -->
+                            </div>
+                            
+                            <div class="time-slots-container">
+                                <div class="time-slots-grid" id="timeSlotsGrid">
+                                    <!-- 时间段将动态生成 -->
+                                </div>
+                            </div>
+                            
+                            <div class="selected-time-display">
+                                <div class="time-info">
+                                    <span>Selected Time:</span>
+                                    <span id="selectedTimeDisplay">Not selected</span>
+                                </div>
+                                <div class="time-duration">
+                                    <span>Duration:</span>
+                                    <span id="durationDisplay">0 hours</span>
+                                </div>
+                            </div>
+                            
+                            <input type="hidden" id="startTime" name="startTime" required>
+                            <input type="hidden" id="endTime" name="endTime" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="attendeesCount">Number of Attendees</label>
+                            <input type="number" id="attendeesCount" name="attendeesCount" min="1" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="purpose">Purpose</label>
+                            <textarea id="purpose" name="purpose" rows="3" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="btn-container">
+                                <button type="submit" class="btn">Book Room</button>
+                                <a href="meeting-rooms.html" class="btn btn-secondary">Back to Rooms</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Meeting Reservation System</p>
+        </footer>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/room-detail.js"></script>
+</body>
+</html>

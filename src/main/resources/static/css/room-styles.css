@@ -1,0 +1,429 @@
+/* 会议室卡片样式 */
+.room-card {
+    display: flex;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.room-image {
+    flex: 0 0 250px;
+    height: 180px;
+    overflow: hidden;
+}
+
+.room-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.room-content {
+    flex: 1;
+    padding: 15px;
+}
+
+.room-meta {
+    display: flex;
+    margin: 10px 0;
+}
+
+.room-meta div {
+    margin-right: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.room-facilities {
+    margin: 15px 0;
+}
+
+.facility-tag {
+    display: inline-block;
+    background: #f0f0f0;
+    padding: 3px 8px;
+    border-radius: 3px;
+    margin: 0 5px 5px 0;
+    font-size: 0.85em;
+}
+
+/* 筛选表单样式 */
+.filter-section {
+    margin-bottom: 30px;
+}
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.facilities-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-item input {
+    width: auto;
+    margin-right: 8px;
+}
+
+/* 会议室详情页样式 */
+.room-detail-header {
+    display: flex;
+    margin-bottom: 30px;
+}
+
+.room-detail-header .room-image {
+    flex: 0 0 350px;
+    height: 250px;
+}
+
+.room-detail-header .room-info {
+    flex: 1;
+    padding: 0 20px;
+}
+
+.room-meta {
+    margin: 15px 0;
+}
+
+.room-facilities h3 {
+    margin-bottom: 10px;
+}
+
+.room-facilities ul {
+    list-style-type: none;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.room-facilities li {
+    background: #f0f0f0;
+    padding: 5px 10px;
+    border-radius: 3px;
+}
+
+.room-description {
+    margin-top: 20px;
+    line-height: 1.6;
+}
+
+/* 预订表单样式 */
+.reservation-form {
+    margin-top: 30px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* 我的预订页面样式 */
+.filter-tabs {
+    margin: 15px 0;
+    display: flex;
+    border-bottom: 1px solid #ddd;
+}
+
+.reservation-card {
+    display: flex;
+    margin-bottom: 15px;
+}
+
+.reservation-date {
+    flex: 0 0 150px;
+    padding: 15px;
+    background: #f5f5f5;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid #eee;
+}
+
+.reservation-content {
+    flex: 1;
+    padding: 15px;
+}
+
+.reservation-meta {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 10px 0;
+}
+
+.reservation-meta div {
+    margin-right: 15px;
+    margin-bottom: 5px;
+}
+
+.reservation-status {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 0.85em;
+    font-weight: bold;
+}
+
+.status-approved {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.status-cancelled {
+    background: #e2e3e5;
+    color: #383d41;
+}
+
+.status-past {
+    background: #cff4fc;
+    color: #055160;
+}
+
+.reservation-actions {
+    flex: 0 0 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 15px;
+    border-left: 1px solid #eee;
+}
+
+.reservation-actions .btn {
+    margin-bottom: 10px;
+}
+
+.btn-cancel {
+    background-color: #dc3545;
+}
+
+.btn-cancel:hover {
+    background-color: #c82333;
+}
+
+.btn-detail {
+    background-color: #6c757d;
+}
+
+.btn-detail:hover {
+    background-color: #5a6268;
+}
+
+/* 模态框样式 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 5px;
+    width: 80%;
+    max-width: 600px;
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.reservation-details {
+    margin: 20px 0;
+}
+
+.detail-item {
+    margin-bottom: 10px;
+    display: flex;
+}
+
+.detail-item .label {
+    font-weight: bold;
+    width: 100px;
+}
+
+.modal-actions {
+    margin-top: 20px;
+    text-align: right;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .room-card, .room-detail-header {
+        flex-direction: column;
+    }
+    
+    .room-image, .room-detail-header .room-image {
+        flex: none;
+        width: 100%;
+        height: 200px;
+    }
+    
+    .room-facilities ul {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .reservation-card {
+        flex-direction: column;
+    }
+    
+    .reservation-date, .reservation-actions {
+        flex: none;
+        width: 100%;
+        border: none;
+        border-bottom: 1px solid #eee;
+        text-align: center;
+    }
+    
+    .reservation-actions {
+        flex-direction: row;
+        justify-content: center;
+    }
+    
+    .reservation-actions .btn {
+        margin: 0 5px;
+    }
+}
+
+/* 添加时间选择样式 */
+.time-slot-section {
+    margin: 20px 0;
+}
+
+.date-tabs {
+    display: flex;
+    overflow-x: auto;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.date-tab {
+    padding: 10px 15px;
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+}
+
+.date-tab.active {
+    border-bottom: 3px solid #3498db;
+    font-weight: bold;
+    color: #3498db;
+}
+
+.time-slots-container {
+    margin: 20px 0;
+}
+
+.time-slots-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+@media (max-width: 768px) {
+    .time-slots-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.time-slot {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.time-slot:hover {
+    border-color: #3498db;
+}
+
+.time-slot.selected {
+    background-color: #3498db;
+    color: white;
+    border-color: #3498db;
+}
+
+.time-slot.available {
+    background-color: #f8f9fa;
+}
+
+.time-slot.unavailable {
+    background-color: #f8d7da;
+    color: #721c24;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.time-slot .status-indicator {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.time-slot.available .status-indicator {
+    background-color: #28a745;
+}
+
+.time-slot.unavailable .status-indicator {
+    background-color: #dc3545;
+}
+
+.selected-time-display {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    margin-top: 15px;
+}
+
+.time-info, .time-duration {
+    display: flex;
+    gap: 10px;
+}
+
+.time-info span:last-child, .time-duration span:last-child {
+    font-weight: bold;
+} 

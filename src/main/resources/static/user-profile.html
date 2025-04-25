@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Meeting Reservation System</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>My Profile</h1>
+            <nav id="navBar">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="user-dashboard.html">Dashboard</a></li>
+                    <li><a href="#" id="logoutBtn">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section class="profile-container">
+                <div class="profile-header">
+                    <div class="avatar-container">
+                        <img id="userAvatar" src="https://via.placeholder.com/150" alt="User Avatar">
+                        <div class="avatar-overlay">
+                            <label for="avatarUpload" class="avatar-change-btn">Change Avatar</label>
+                            <input type="file" id="avatarUpload" accept="image/*" style="display:none">
+                        </div>
+                    </div>
+                    <h2 id="username">Loading...</h2>
+                </div>
+                
+                <div class="profile-form">
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label for="studentId">Student ID</label>
+                            <input type="text" id="studentId" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="displayName">Username</label>
+                            <input type="text" id="displayName" name="username">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" readonly>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" id="changePasswordBtn" class="btn secondary">Change Password</button>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn">Save Changes</button>
+                        </div>
+                        <div id="updateMessage" class="message"></div>
+                    </form>
+                </div>
+                
+                <!-- Change Password Dialog -->
+                <div id="passwordDialog" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h3>Change Password</h3>
+                        <form id="changePasswordForm">
+                            <div class="form-group">
+                                <label for="currentPassword">Current Password</label>
+                                <input type="password" id="currentPassword" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="newPassword">New Password</label>
+                                <input type="password" id="newPassword" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm New Password</label>
+                                <input type="password" id="confirmPassword" required>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn">Update Password</button>
+                            </div>
+                            <div id="passwordMessage" class="message"></div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Meeting Reservation System</p>
+        </footer>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/user-profile.js"></script>
+</body>
+</html> 

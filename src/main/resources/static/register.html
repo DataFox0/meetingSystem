@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Meeting Reservation System</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .avatar-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px dashed #ccc;
+            overflow: hidden;
+            display: none;
+            margin-top: 10px;
+        }
+        
+        .avatar-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Register</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="login.html">Login</a></li>
+                    <li><a href="register.html" class="active">Register</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <div class="form-container">
+                <div class="tabs">
+                    <button class="tab-btn active" id="userTabBtn">User Registration</button>
+                    <button class="tab-btn" id="adminTabBtn">Admin Registration</button>
+                </div>
+                
+                <div id="userRegisterForm" class="form-content">
+                    <form id="registerUserForm" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="userStudentId">Student ID</label>
+                            <input type="text" id="userStudentId" name="studentId" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="userUsername">Username</label>
+                            <input type="text" id="userUsername" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="userEmail">Email</label>
+                            <input type="email" id="userEmail" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="userPassword">Password</label>
+                            <input type="password" id="userPassword" name="password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="userAvatarFile">Avatar (optional)</label>
+                            <input type="file" id="userAvatarFile" name="avatarFile" accept="image/*">
+                            <div class="avatar-preview" id="userAvatarPreview">
+                                <img id="userAvatarImg" src="#" alt="Avatar preview">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn">Register</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div id="adminRegisterForm" class="form-content hide">
+                    <form id="registerAdminForm" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="adminUsername">Username</label>
+                            <input type="text" id="adminUsername" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="adminEmail">Email</label>
+                            <input type="email" id="adminEmail" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="adminPassword">Password</label>
+                            <input type="password" id="adminPassword" name="password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="adminInvitationCode">Invitation Code</label>
+                            <input type="text" id="adminInvitationCode" name="invitationCode" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="adminAvatarFile">Avatar (optional)</label>
+                            <input type="file" id="adminAvatarFile" name="avatarFile" accept="image/*">
+                            <div class="avatar-preview" id="adminAvatarPreview">
+                                <img id="adminAvatarImg" src="#" alt="Avatar preview">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn">Register</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Meeting Reservation System</p>
+        </footer>
+    </div>
+
+    <!-- 确保首先加载api.js，因为register.js依赖它 -->
+    <script src="js/api.js"></script>
+    <script src="js/register.js"></script>
+</body>
+</html> 

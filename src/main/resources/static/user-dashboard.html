@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Meeting Reservation System</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>User Dashboard</h1>
+            <nav id="navBar">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="user-dashboard.html" class="active">Dashboard</a></li>
+                    <li><a href="profile.html">My Profile</a></li>
+                    <li><a href="meeting-rooms.html">Meeting Rooms</a></li>
+                    <li><a href="my-reservations.html">My Reservations</a></li>
+                    <li><a href="#" id="logoutBtn">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section class="dashboard-header">
+                <h2>Welcome, <span id="username"></span></h2>
+                <p>Here you can manage your meeting reservations.</p>
+            </section>
+            
+            <section class="dashboard-content">
+                <div class="card">
+                    <h3>My Profile</h3>
+                    <p>View and edit your profile information.</p>
+                    <a href="profile.html" class="btn">Go to Profile</a>
+                </div>
+                
+                <div class="card">
+                    <h3>Meeting Rooms</h3>
+                    <p>Browse and book meeting rooms.</p>
+                    <a href="meeting-rooms.html" class="btn">View Rooms</a>
+                </div>
+                
+                <div class="card">
+                    <h3>My Reservations</h3>
+                    <p>View and manage your reservations.</p>
+                    <a href="my-reservations.html" class="btn">View Reservations</a>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Meeting Reservation System</p>
+        </footer>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/user-dashboard.js"></script>
+    <script src="js/nav-bar.js"></script>
+</body>
+</html>

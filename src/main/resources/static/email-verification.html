@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Verification | Meeting Room Reservation System</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/modern-styles.css">
+  <style>
+    body {
+      background-color: #f3f4f6;
+      background-image: url('img/pattern-bg.svg');
+      background-size: cover;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .verification-container {
+      max-width: 480px;
+      width: 90%;
+      padding: 2rem;
+    }
+    
+    .logo-container {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .logo-container img {
+      height: 60px;
+    }
+    
+    .verification-card {
+      background-color: white;
+      border-radius: 1rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      padding: 2.5rem;
+      animation: fadeIn 0.5s ease;
+      text-align: center;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .verification-card h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: #111827;
+    }
+    
+    .verification-card p {
+      color: #6b7280;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+    
+    .verification-icon {
+      font-size: 3.5rem;
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+    }
+    
+    .verification-email {
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+    
+    .verification-otp {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin: 2rem 0;
+    }
+    
+    .otp-input {
+      width: 4rem;
+      height: 4rem;
+      border: 2px solid #d1d5db;
+      border-radius: 0.5rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+      text-align: center;
+    }
+    
+    .otp-input:focus {
+      border-color: var(--primary-color);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2);
+    }
+    
+    .resend-link {
+      display: inline-block;
+      color: var(--primary-color);
+      margin-top: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+    
+    .resend-link:hover {
+      color: var(--primary-dark);
+      text-decoration: underline;
+    }
+    
+    .countdown {
+      display: inline-block;
+      color: #6b7280;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+    
+    .btn-verify {
+      width: 100%;
+      padding: 0.85rem;
+      font-size: 1rem;
+      font-weight: 500;
+      margin-top: 1rem;
+    }
+    
+    /* 响应式调整 */
+    @media (max-width: 480px) {
+      .verification-card {
+        padding: 1.5rem;
+      }
+      
+      .otp-input {
+        width: 3rem;
+        height: 3rem;
+        font-size: 1.25rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="verification-container">
+    <div class="logo-container">
+      <img src="img/logo.svg" alt="Meeting Room Reservation System">
+    </div>
+    
+    <div class="verification-card">
+      <div class="verification-icon">
+        <i class="fas fa-envelope-open-text"></i>
+      </div>
+      
+      <h1>Email Verification</h1>
+      <p>We've sent a verification code to <span class="verification-email" id="emailDisplay">your email</span>. Please enter the code below to verify your account.</p>
+      
+      <form id="verificationForm">
+        <div class="verification-otp">
+          <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+          <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+          <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+          <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+          <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+          <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+        </div>
+        
+        <div id="errorMessage" class="alert alert-danger" style="display: none;">
+          <i class="fas fa-exclamation-circle"></i>
+          <span id="errorText"></span>
+        </div>
+        
+        <div id="successMessage" class="alert alert-success" style="display: none;">
+          <i class="fas fa-check-circle"></i>
+          <span id="successText"></span>
+        </div>
+        
+        <button type="submit" class="btn btn-primary btn-verify">
+          <i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i>Verify Email
+        </button>
+        
+        <div>
+          <a href="#" class="resend-link" id="resendLink">Resend verification code</a>
+          <div class="countdown" id="countdownTimer" style="display: none;">Resend in <span id="countdownSeconds">60</span>s</div>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <script src="js/api.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // 从URL获取email
+      const urlParams = new URLSearchParams(window.location.search);
+      const email = urlParams.get('email');
+      const type = urlParams.get('type') || 'user'; // 默认为user类型
+      
+      if (email) {
+        // 显示邮箱，并进行部分隐藏处理
+        const emailDisplay = document.getElementById('emailDisplay');
+        const [username, domain] = email.split('@');
+        emailDisplay.textContent = username + '@' + domain.replace(/^[^.]+\./, '...');
+      }
+    });
+  </script>
+</body>
+</html> 
