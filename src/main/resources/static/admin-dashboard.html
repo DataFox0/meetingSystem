@@ -4,85 +4,251 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Meeting Reservation System</title>
+    <link rel="stylesheet" href="css/modern-styles.css">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/admin-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .dashboard-header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dashboard-header .page-title {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #f8f9fa;
+            color: #3498db;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+            color: #2c3e50;
+        }
+        
+        .stat-label {
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+        
+        .admin-shortcuts {
+            margin-bottom: 2rem;
+        }
+        
+        .shortcut-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .shortcut-card {
+            padding: 1.5rem;
+            border-radius: 10px;
+            background: white;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-left: 4px solid #3498db;
+        }
+        
+        .shortcut-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .shortcut-card h3 {
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-size: 1.25rem;
+        }
+        
+        .shortcut-card p {
+            margin: 0;
+            color: #7f8c8d;
+        }
+        
+        .recent-activity {
+            padding: 1.5rem;
+            border-radius: 10px;
+            background: white;
+        }
+        
+        .recent-activity h3 {
+            margin-top: 0;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+            color: #2c3e50;
+        }
+        
+        .activity-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .activity-item {
+            padding: 1rem 0;
+            border-bottom: 1px solid #f5f5f5;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .activity-icon {
+            margin-right: 1rem;
+            font-size: 1.25rem;
+            color: #3498db;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .activity-content {
+            flex-grow: 1;
+        }
+        
+        .activity-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+            color: #2c3e50;
+        }
+        
+        .activity-time {
+            font-size: 0.85rem;
+            color: #95a5a6;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Admin Dashboard</h1>
-            <nav>
-                <ul>
-                    <li><a href="admin-dashboard.html" class="active">Dashboard</a></li>
-                    <li><a href="admin-rooms.html">Rooms</a></li>
-                    <li><a href="admin-reservations.html">Reservations</a></li>
-                    <li><a href="admin-users.html">Users</a></li>
-                    <li><a href="#" id="logoutBtn">Logout</a></li>
-                </ul>
-            </nav>
+        <header class="site-header modern-navbar">
+            <div class="header-container">
+                <div class="site-logo">
+                    <img src="images/logo.svg" alt="Meeting Reservation System Logo" style="height:40px;">
+                    <h1 class="logo-title">Admin Dashboard</h1>
+                </div>
+                <nav>
+                    <ul class="nav-menu">
+                        <li class="nav-item"><a href="admin-dashboard.html" class="nav-link active">Dashboard</a></li>
+                        <li class="nav-item"><a href="admin-rooms.html" class="nav-link">Rooms</a></li>
+                        <li class="nav-item"><a href="admin-reservations.html" class="nav-link">Reservations</a></li>
+                        <li class="nav-item"><a href="admin-users.html" class="nav-link">Users</a></li>
+                        <li class="nav-item"><a href="#" id="logoutBtn" class="nav-link">Logout</a></li>
+                    </ul>
+                </nav>
+            </div>
         </header>
-
         <main>
-            <section class="dashboard-header">
-                <h2>Welcome, <span id="adminName"></span></h2>
+            <section class="dashboard-header modern-card">
+                <h2 class="page-title">Welcome, <span id="adminName"></span></h2>
                 <p>Here you can manage the meeting reservation system.</p>
             </section>
-            
             <section class="stats-container">
-                <div class="stat-card">
-                    <div class="stat-icon">🏢</div>
+                <div class="stat-card modern-card">
+                    <div class="stat-icon"><i class="fas fa-door-open"></i></div>
                     <div class="stat-value" id="roomCount">0</div>
                     <div class="stat-label">Total Rooms</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon">📅</div>
+                <div class="stat-card modern-card">
+                    <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
                     <div class="stat-value" id="reservationCount">0</div>
                     <div class="stat-label">Active Reservations</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon">👤</div>
+                <div class="stat-card modern-card">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
                     <div class="stat-value" id="userCount">0</div>
                     <div class="stat-label">Registered Users</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon">🔄</div>
+                <div class="stat-card modern-card">
+                    <div class="stat-icon"><i class="fas fa-clock"></i></div>
                     <div class="stat-value" id="todayReservationCount">0</div>
                     <div class="stat-label">Today's Reservations</div>
                 </div>
             </section>
-            
             <section class="admin-shortcuts">
                 <div class="shortcut-grid">
-                    <a href="admin-rooms.html" class="shortcut-card">
-                        <h3>Manage Rooms</h3>
+                    <a href="admin-rooms.html" class="shortcut-card modern-card">
+                        <h3><i class="fas fa-door-open mr-2"></i> Manage Rooms</h3>
                         <p>Add, edit, or delete meeting rooms</p>
                     </a>
-                    <a href="admin-reservations.html" class="shortcut-card">
-                        <h3>Manage Reservations</h3>
+                    <a href="admin-reservations.html" class="shortcut-card modern-card">
+                        <h3><i class="fas fa-calendar-alt mr-2"></i> Manage Reservations</h3>
                         <p>View and manage user reservations</p>
                     </a>
-                    <a href="admin-users.html" class="shortcut-card">
-                        <h3>Manage Users</h3>
+                    <a href="admin-users.html" class="shortcut-card modern-card">
+                        <h3><i class="fas fa-user-cog mr-2"></i> Manage Users</h3>
                         <p>Lock, unlock, or delete user accounts</p>
                     </a>
                 </div>
             </section>
-            
-            <section class="recent-activity">
-                <h3>Recent Activity</h3>
+            <section class="recent-activity modern-card">
+                <h3><i class="fas fa-history mr-2"></i> Recent Activity</h3>
                 <div class="activity-list" id="recentActivityList">
                     <!-- 活动记录将在这里动态生成 -->
+                    <div class="activity-placeholder text-center py-4 text-muted">
+                        <i class="fas fa-spinner fa-spin"></i> Loading recent activities...
+                    </div>
                 </div>
             </section>
         </main>
-
-        <footer>
-            <p>&copy; 2025 Meeting Reservation System</p>
+        <footer class="site-footer">
+            <div class="footer-content">
+                <p class="footer-text">&copy; 2025 Meeting Reservation System. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="privacy-policy.html" class="footer-link">Privacy Policy</a>
+                    <a href="terms-of-service.html" class="footer-link">Terms of Service</a>
+                    <a href="contact.html" class="footer-link">Contact Us</a>
+                </div>
+            </div>
         </footer>
     </div>
-
     <script src="js/api.js"></script>
-    <script src="js/script.js"></script>
     <script src="js/admin-dashboard.js"></script>
 </body>
 </html>

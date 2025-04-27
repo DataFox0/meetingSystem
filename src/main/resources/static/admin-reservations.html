@@ -4,52 +4,337 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Reservations - Admin Dashboard</title>
+    <link rel="stylesheet" href="css/modern-styles.css">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/admin-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .admin-header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .admin-header h2 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        .filter-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .filter-item {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .filter-item label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        
+        .filter-item select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: #fff;
+            transition: all 0.3s;
+        }
+        
+        .filter-item select:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+        
+        .admin-actions {
+            margin-bottom: 1.5rem;
+        }
+        
+        .bulk-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn i {
+            margin-right: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        
+        .btn-secondary {
+            background: #ecf0f1;
+            color: #2c3e50;
+        }
+        
+        .btn-secondary:hover {
+            background: #bdc3c7;
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .admin-table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .admin-table th {
+            background: #f8f9fa;
+            padding: 1rem;
+            text-align: left;
+            color: #2c3e50;
+            font-weight: 600;
+            border-bottom: 2px solid #ecf0f1;
+        }
+        
+        .admin-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #ecf0f1;
+            color: #34495e;
+        }
+        
+        .admin-table tr:hover td {
+            background: #f8f9fa;
+        }
+        
+        .status-label {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-approved {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-cancelled {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-sm {
+            padding: 0.35rem 0.75rem;
+            font-size: 0.85rem;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 90%;
+            width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalFadeIn 0.3s;
+            padding: 2rem;
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .modal h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 1px solid #ecf0f1;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+        
+        .close:hover {
+            color: #2c3e50;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+        
+        .reservation-details {
+            margin-bottom: 1.5rem;
+        }
+        
+        .detail-row {
+            display: flex;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        
+        .detail-label {
+            flex: 0 0 120px;
+            font-weight: 500;
+            color: #7f8c8d;
+        }
+        
+        .detail-value {
+            flex: 1;
+            color: #2c3e50;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .mr-2 {
+            margin-right: 0.5rem;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Reservation Management</h1>
-            <nav>
-                <ul>
-                    <li><a href="admin-dashboard.html">Dashboard</a></li>
-                    <li><a href="admin-rooms.html">Rooms</a></li>
-                    <li><a href="admin-reservations.html" class="active">Reservations</a></li>
-                    <li><a href="admin-users.html">Users</a></li>
-                    <li><a href="#" id="logoutBtn">Logout</a></li>
-                </ul>
-            </nav>
+        <header class="site-header modern-navbar">
+            <div class="header-container">
+                <div class="site-logo">
+                    <i class="fas fa-calendar-check" style="font-size: 32px; color: #3498db;"></i>
+                    <h1 class="logo-title">Admin Dashboard</h1>
+                </div>
+                <nav>
+                    <ul class="nav-menu">
+                        <li class="nav-item"><a href="admin-dashboard.html" class="nav-link">Dashboard</a></li>
+                        <li class="nav-item"><a href="admin-rooms.html" class="nav-link">Rooms</a></li>
+                        <li class="nav-item"><a href="admin-reservations.html" class="nav-link active">Reservations</a></li>
+                        <li class="nav-item"><a href="admin-users.html" class="nav-link">Users</a></li>
+                        <li class="nav-item"><a href="#" id="logoutBtn" class="nav-link">Logout</a></li>
+                    </ul>
+                </nav>
+            </div>
         </header>
 
         <main>
             <section class="admin-header">
-                <h2>Manage Meeting Reservations</h2>
-                <div class="filter-controls">
-                    <div class="filter-item">
-                        <label for="roomFilter">Room:</label>
-                        <select id="roomFilter">
-                            <option value="">All Rooms</option>
-                            <!-- 会议室选项将在这里动态生成 -->
-                        </select>
-                    </div>
-                    <div class="filter-item">
-                        <label for="statusFilter">Status:</label>
-                        <select id="statusFilter">
-                            <option value="">All Statuses</option>
-                            <option value="PENDING">Pending</option>
-                            <option value="APPROVED">Approved</option>
-                            <option value="REJECTED">Rejected</option>
-                            <option value="CANCELLED">Cancelled</option>
-                        </select>
-                    </div>
-                    <button id="applyFiltersBtn" class="btn">Apply Filters</button>
+                <h2><i class="fas fa-calendar-alt mr-2"></i> Manage Meeting Reservations</h2>
+                <p>View, filter, and manage all reservations in the system</p>
+            </section>
+            
+            <section class="filter-controls">
+                <div class="filter-item">
+                    <label for="roomFilter"><i class="fas fa-door-open mr-2"></i>Room:</label>
+                    <select id="roomFilter">
+                        <option value="">All Rooms</option>
+                        <!-- 会议室选项将在这里动态生成 -->
+                    </select>
                 </div>
+                <div class="filter-item">
+                    <label for="statusFilter"><i class="fas fa-tag mr-2"></i>Status:</label>
+                    <select id="statusFilter">
+                        <option value="">All Statuses</option>
+                        <option value="PENDING">Pending</option>
+                        <option value="APPROVED">Approved</option>
+                        <option value="REJECTED">Rejected</option>
+                        <option value="CANCELLED">Cancelled</option>
+                    </select>
+                </div>
+                <button id="applyFiltersBtn" class="btn btn-primary">
+                    <i class="fas fa-filter"></i> Apply Filters
+                </button>
             </section>
             
             <section class="admin-actions">
                 <div class="bulk-actions">
-                    <button id="deleteSelectedBtn" class="btn btn-danger" disabled>Delete Selected</button>
+                    <button id="deleteSelectedBtn" class="btn btn-danger" disabled>
+                        <i class="fas fa-trash-alt"></i> Delete Selected
+                    </button>
                 </div>
             </section>
             
@@ -71,6 +356,13 @@
                         </thead>
                         <tbody>
                             <!-- 预订数据将在这里动态生成 -->
+                            <tr>
+                                <td colspan="9" class="text-center">
+                                    <div class="py-4">
+                                        <i class="fas fa-spinner fa-spin"></i> Loading reservations...
+                                    </div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -80,7 +372,7 @@
             <div id="reservationDetailModal" class="modal">
                 <div class="modal-content">
                     <span class="close">&times;</span>
-                    <h2>Reservation Details</h2>
+                    <h2><i class="fas fa-calendar-check"></i> Reservation Details</h2>
                     <div class="reservation-details">
                         <div class="detail-row">
                             <div class="detail-label">ID:</div>
@@ -116,8 +408,8 @@
                         </div>
                     </div>
                     <div class="modal-actions">
-                        <button id="deleteReservationBtn" class="btn btn-danger">Delete</button>
-                        <button class="btn btn-secondary close-btn">Close</button>
+                        <button id="deleteReservationBtn" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
+                        <button class="btn btn-secondary close-btn"><i class="fas fa-times"></i> Close</button>
                     </div>
                 </div>
             </div>
@@ -125,148 +417,107 @@
             <!-- 确认删除的模态框 -->
             <div id="deleteConfirmModal" class="modal">
                 <div class="modal-content">
-                    <h2>Confirm Deletion</h2>
+                    <h2><i class="fas fa-exclamation-triangle text-danger mr-2"></i> Confirm Deletion</h2>
                     <p>Are you sure you want to delete the selected reservation(s)?</p>
                     <p>This action cannot be undone.</p>
                     <div class="modal-actions">
-                        <button id="confirmDeleteBtn" class="btn btn-danger">Delete</button>
-                        <button class="btn btn-secondary close-btn">Cancel</button>
+                        <button id="confirmDeleteBtn" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
+                        <button class="btn btn-secondary close-btn"><i class="fas fa-times"></i> Cancel</button>
                     </div>
                 </div>
             </div>
         </main>
 
-        <footer>
-            <p>&copy; 2025 Meeting Reservation System</p>
+        <footer class="site-footer">
+            <div class="footer-content">
+                <p class="footer-text">&copy; 2025 Meeting Reservation System. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="privacy-policy.html" class="footer-link">Privacy Policy</a>
+                    <a href="terms-of-service.html" class="footer-link">Terms of Service</a>
+                    <a href="contact.html" class="footer-link">Contact Us</a>
+                </div>
+            </div>
         </footer>
     </div>
 
     <script src="js/api.js"></script>
     <script src="js/script.js"></script>
     <script>
-        // 辅助函数：格式化日期
-        function formatDate(dateString) {
-            if (!dateString) return 'N/A';
-            const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
-            return new Date(dateString).toLocaleDateString('en-US', options);
+    document.addEventListener('DOMContentLoaded', function() {
+        // 检查是否是管理员
+        if (!isAdmin()) {
+            window.location.href = 'login.html';
+            return;
         }
-
-        // 辅助函数：截断文本
-        function truncateText(text, maxLength) {
-            if (!text) return '';
-            return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
-        }
-
-        // 辅助函数：获取状态文本
-        function getStatusText(reservation) {
-            if (reservation.cancelled) return 'Cancelled';
-            
-            switch (reservation.status) {
-                case 'PENDING': return 'Pending';
-                case 'APPROVED': return 'Approved';
-                case 'REJECTED': return 'Rejected';
-                default: return reservation.status || 'Unknown';
-            }
-        }
-
-        // 辅助函数：获取状态CSS类
-        function getStatusClass(reservation) {
-            if (reservation.cancelled) return 'status-cancelled';
-            
-            switch (reservation.status) {
-                case 'PENDING': return 'status-pending';
-                case 'APPROVED': return 'status-approved';
-                case 'REJECTED': return 'status-rejected';
-                default: return '';
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // 检查是否是管理员
-            if (!isAdmin()) {
-                window.location.href = 'login.html';
-                return;
-            }
-            
-            // 绑定登出按钮事件
-            document.getElementById('logoutBtn').addEventListener('click', function(e) {
-                e.preventDefault();
-                localStorage.removeItem('token');
-                localStorage.removeItem('username');
-                localStorage.removeItem('role');
-                window.location.href = 'login.html';
-            });
-            
-            // 加载会议室选项
-            loadRoomOptions();
-            
-            // 加载预订列表
+        
+        // 添加登出按钮事件
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            authStorage.clearAuth();
+            window.location.href = 'login.html';
+        });
+        
+        // 加载会议室选项
+        loadRoomOptions();
+        
+        // 加载预订列表
+        loadReservations();
+        
+        // 设置筛选按钮点击事件
+        document.getElementById('applyFiltersBtn').addEventListener('click', function() {
             loadReservations();
-            
-            // 设置筛选按钮点击事件
-            document.getElementById('applyFiltersBtn').addEventListener('click', function() {
-                loadReservations();
+        });
+        
+        // 设置全选复选框事件
+        document.getElementById('selectAll').addEventListener('change', function() {
+            const isChecked = this.checked;
+            document.querySelectorAll('input[name="reservation-checkbox"]').forEach(checkbox => {
+                checkbox.checked = isChecked;
             });
+            updateBulkActions();
+        });
+        
+        // 设置批量删除按钮点击事件
+        document.getElementById('deleteSelectedBtn').addEventListener('click', function() {
+            const selectedIds = getSelectedReservationIds();
+            if (selectedIds.length === 0) return;
             
-            // 设置全选复选框事件
-            document.getElementById('selectAll').addEventListener('change', function() {
-                const isChecked = this.checked;
-                document.querySelectorAll('input[name="reservation-checkbox"]').forEach(checkbox => {
-                    checkbox.checked = isChecked;
-                });
-                updateBulkActions();
-            });
-            
-            // 设置批量删除按钮点击事件
-            document.getElementById('deleteSelectedBtn').addEventListener('click', function() {
-                const selectedIds = getSelectedReservationIds();
-                if (selectedIds.length === 0) return;
-                
-                showDeleteConfirmation(selectedIds);
-            });
-            
-            // 设置模态框关闭事件
-            document.querySelectorAll('.close, .close-btn').forEach(element => {
-                element.addEventListener('click', function() {
-                    document.getElementById('reservationDetailModal').style.display = 'none';
-                    document.getElementById('deleteConfirmModal').style.display = 'none';
-                });
-            });
-            
-            // 点击页面其他地方关闭模态框
-            window.addEventListener('click', function(event) {
-                if (event.target.className === 'modal') {
-                    event.target.style.display = 'none';
-                }
+            showDeleteConfirmation(selectedIds);
+        });
+        
+        // 设置模态框关闭事件
+        document.querySelectorAll('.close, .close-btn').forEach(element => {
+            element.addEventListener('click', function() {
+                document.getElementById('reservationDetailModal').style.display = 'none';
+                document.getElementById('deleteConfirmModal').style.display = 'none';
             });
         });
+        
+        // 点击页面其他地方关闭模态框
+        window.addEventListener('click', function(event) {
+            if (event.target.className === 'modal') {
+                event.target.style.display = 'none';
+            }
+        });
+    });
 
-        // 检查是否是管理员
-        function isAdmin() {
-            const token = localStorage.getItem('token');
-            const role = localStorage.getItem('role');
-            return token && (role === 'ADMIN' || true); // 临时允许所有身份
-        }
+    // 检查是否是管理员
+    function isAdmin() {
+        const auth = authStorage.getAuth();
+        return auth && auth.token && auth.role === 'ADMIN';
+    }
 
-        // 加载会议室选项
-        function loadRoomOptions() {
-            const token = localStorage.getItem('token');
-            
-            fetch('/api/admin/rooms', {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to load rooms');
-                }
-                return response.json();
-            })
+    // 加载会议室选项
+    function loadRoomOptions() {
+        adminApi.getAllRooms()
             .then(rooms => {
+                console.log("加载到的会议室:", rooms);
                 const roomSelect = document.getElementById('roomFilter');
+                
+                if (!rooms || !Array.isArray(rooms) || rooms.length === 0) {
+                    console.log("没有找到会议室或数据格式不正确");
+                    return;
+                }
                 
                 rooms.forEach(room => {
                     const option = document.createElement('option');
@@ -276,32 +527,251 @@
                 });
             })
             .catch(error => {
-                console.error('Error loading room options:', error);
+                console.error('加载会议室选项时出错:', error);
             });
-        }
+    }
 
-        // 加载预订列表
-        function loadReservations() {
-            const roomId = document.getElementById('roomFilter').value;
-            const status = document.getElementById('statusFilter').value;
-            
-            // 显示加载状态
-            const tableBody = document.querySelector('#reservationsTable tbody');
-            tableBody.innerHTML = '<tr><td colspan="9" class="text-center">Loading reservations...</td></tr>';
-            
-            const token = localStorage.getItem('token');
-            
-            // 构建URL查询参数
-            let url = '/api/admin/reservations';
-            const params = [];
-            if (roomId) params.push(`roomId=${roomId}`);
-            if (status) params.push(`status=${status}`);
-            if (params.length > 0) {
-                url += '?' + params.join('&');
+    // 加载预订列表
+    function loadReservations() {
+        const roomId = document.getElementById('roomFilter').value;
+        const status = document.getElementById('statusFilter').value;
+        
+        // 显示加载状态
+        const tableBody = document.querySelector('#reservationsTable tbody');
+        tableBody.innerHTML = '<tr><td colspan="9" class="text-center"><div class="py-4"><i class="fas fa-spinner fa-spin"></i> Loading reservations...</div></td></tr>';
+        
+        // 使用API获取数据
+        const token = localStorage.getItem('token');
+        let url = '/api/admin/reservations';
+        
+        // 添加查询参数
+        const params = [];
+        if (roomId) params.push(`roomId=${roomId}`);
+        if (status) params.push(`status=${status}`);
+        
+        if (params.length > 0) {
+            url += '?' + params.join('&');
+        }
+        
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`请求失败: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // 处理响应数据
+            let reservations = [];
+            if (Array.isArray(data)) {
+                reservations = data;
+            } else if (data.content && Array.isArray(data.content)) {
+                reservations = data.content;
+            } else if (typeof data === 'object' && data !== null) {
+                reservations = [data];
             }
             
-            fetch(url, {
-                method: 'GET',
+            // 存储预订数据供后续使用
+            window.allReservations = reservations;
+            
+            tableBody.innerHTML = '';
+            
+            if (reservations.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="9" class="text-center">没有找到预订记录</td></tr>';
+                return;
+            }
+            
+            reservations.forEach(reservation => {
+                const tr = document.createElement('tr');
+                
+                const statusClass = reservation.cancelled ? 'status-cancelled' : 
+                                 reservation.status === 'PENDING' ? 'status-pending' :
+                                 reservation.status === 'APPROVED' ? 'status-approved' :
+                                 reservation.status === 'REJECTED' ? 'status-rejected' : '';
+                
+                const statusText = reservation.cancelled ? 'Cancelled' :
+                                 reservation.status === 'PENDING' ? 'Pending' :
+                                 reservation.status === 'APPROVED' ? 'Approved' :
+                                 reservation.status === 'REJECTED' ? 'Rejected' : 
+                                 reservation.status || 'Unknown';
+                
+                // 格式化日期
+                const date = reservation.date ? new Date(reservation.date).toLocaleDateString() : 'N/A';
+                
+                tr.innerHTML = `
+                    <td><input type="checkbox" name="reservation-checkbox" value="${reservation.id}"></td>
+                    <td>${reservation.id || '-'}</td>
+                    <td>${reservation.roomName || reservation.room?.name || '-'}</td>
+                    <td>${reservation.userStudentId || '-'}</td>
+                    <td>${date}</td>
+                    <td>${reservation.startTime || '-'} - ${reservation.endTime || '-'}</td>
+                    <td>${reservation.purpose ? (reservation.purpose.length > 30 ? reservation.purpose.substring(0, 30) + '...' : reservation.purpose) : '-'}</td>
+                    <td><span class="status-label ${statusClass}">${statusText}</span></td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="btn btn-sm btn-primary view-btn" data-id="${reservation.id}">View</button>
+                            <button class="btn btn-sm btn-danger delete-btn" data-id="${reservation.id}">Delete</button>
+                        </div>
+                    </td>
+                `;
+                
+                tableBody.appendChild(tr);
+            });
+            
+            // 添加事件监听器
+            setupReservationEventListeners();
+        })
+        .catch(error => {
+            console.error('加载预订数据时出错:', error);
+            tableBody.innerHTML = `<tr><td colspan="9" class="text-center text-danger"><i class="fas fa-exclamation-circle"></i> 加载数据失败: ${error.message}</td></tr>`;
+        });
+    }
+
+    // 设置预订相关的事件监听器
+    function setupReservationEventListeners() {
+        // 添加复选框事件
+        document.querySelectorAll('input[name="reservation-checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', updateBulkActions);
+        });
+        
+        // 添加查看按钮事件
+        document.querySelectorAll('.view-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const reservationId = this.getAttribute('data-id');
+                showReservationDetail(reservationId);
+            });
+        });
+        
+        // 添加删除按钮事件
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const reservationId = this.getAttribute('data-id');
+                showDeleteConfirmation([reservationId]);
+            });
+        });
+        
+        // 重置全选复选框
+        document.getElementById('selectAll').checked = false;
+        updateBulkActions();
+    }
+
+    // 更新批量操作按钮状态
+    function updateBulkActions() {
+        const selectedCount = document.querySelectorAll('input[name="reservation-checkbox"]:checked').length;
+        const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+        
+        deleteSelectedBtn.disabled = selectedCount === 0;
+        deleteSelectedBtn.textContent = `Delete Selected (${selectedCount})`;
+    }
+
+    // 获取选中的预订ID
+    function getSelectedReservationIds() {
+        return Array.from(document.querySelectorAll('input[name="reservation-checkbox"]:checked'))
+            .map(checkbox => checkbox.value);
+    }
+
+    // 修改显示预订详情的功能
+    function showReservationDetail(reservationId) {
+        // 从存储的数据中找到预订
+        const reservation = window.allReservations.find(r => r.id == reservationId);
+        
+        if (!reservation) {
+            alert('找不到预订信息');
+            return;
+        }
+        
+        // 检查所有需要使用的元素是否存在
+        const elements = {
+            'detail-id': document.getElementById('detail-id'),
+            'detail-room': document.getElementById('detail-room'),
+            'detail-student-id': document.getElementById('detail-student-id'),
+            'detail-date': document.getElementById('detail-date'),
+            'detail-time': document.getElementById('detail-time'),
+            'detail-attendees': document.getElementById('detail-attendees'),
+            'detail-purpose': document.getElementById('detail-purpose'),
+            'detail-status': document.getElementById('detail-status')
+        };
+        
+        // 检查是否有缺失的元素
+        const missingElements = Object.entries(elements)
+            .filter(([id, element]) => !element)
+            .map(([id]) => id);
+        
+        if (missingElements.length > 0) {
+            console.error('找不到以下元素：', missingElements);
+            alert(`模态框中缺少必要元素: ${missingElements.join(', ')}`);
+            return;
+        }
+        
+        // 填充详情模态框
+        elements['detail-id'].textContent = reservation.id || '-';
+        elements['detail-room'].textContent = reservation.roomName || '-';
+        elements['detail-student-id'].textContent = reservation.userStudentId || '-';
+        elements['detail-date'].textContent = reservation.date ? new Date(reservation.date).toLocaleDateString() : '-';
+        elements['detail-time'].textContent = `${reservation.startTime || '-'} - ${reservation.endTime || '-'}`;
+        elements['detail-attendees'].textContent = reservation.attendeesCount || '-';
+        elements['detail-purpose'].textContent = reservation.purpose || '-';
+        
+        // 设置状态显示
+        const statusElement = elements['detail-status'];
+        if (reservation.cancelled) {
+            statusElement.innerHTML = '<span class="status-label status-cancelled">Cancelled</span>';
+        } else {
+            const statusClass = reservation.status === 'PENDING' ? 'status-pending' :
+                               reservation.status === 'APPROVED' ? 'status-approved' :
+                               reservation.status === 'REJECTED' ? 'status-rejected' : '';
+            
+            const statusText = reservation.status === 'PENDING' ? 'Pending' :
+                              reservation.status === 'APPROVED' ? 'Approved' :
+                              reservation.status === 'REJECTED' ? 'Rejected' : 
+                              reservation.status || 'Unknown';
+            
+            statusElement.innerHTML = `<span class="status-label ${statusClass}">${statusText}</span>`;
+        }
+        
+        // 设置删除按钮事件
+        const deleteBtn = document.getElementById('deleteReservationBtn');
+        if (deleteBtn) {
+            deleteBtn.onclick = function() {
+                document.getElementById('reservationDetailModal').style.display = 'none';
+                showDeleteConfirmation([reservation.id]);
+            };
+        }
+        
+        // 显示模态框
+        const modal = document.getElementById('reservationDetailModal');
+        if (modal) {
+            modal.style.display = 'block';
+        } else {
+            console.error('找不到预订详情模态框');
+            alert('无法显示预订详情：模态框元素不存在');
+        }
+    }
+
+    // 显示删除确认
+    function showDeleteConfirmation(reservationIds) {
+        document.getElementById('reservationDetailModal').style.display = 'none';
+        document.getElementById('deleteConfirmModal').style.display = 'block';
+        
+        document.getElementById('confirmDeleteBtn').onclick = function() {
+            deleteReservations(reservationIds);
+        };
+    }
+
+    // 删除预订
+    function deleteReservations(reservationIds) {
+        const token = localStorage.getItem('token');
+        
+        if (reservationIds.length === 1) {
+            // 删除单个预订
+            fetch(`/api/admin/reservations/${reservationIds[0]}`, {
+                method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -309,231 +779,46 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Failed to load reservations');
+                    throw new Error('删除预订失败');
                 }
-                return response.json();
+                return response.text();
             })
-            .then(reservations => {
-                console.log("Loaded reservations:", reservations); // 调试用
-                tableBody.innerHTML = '';
-                
-                if (reservations.length === 0) {
-                    tableBody.innerHTML = '<tr><td colspan="9" class="text-center">No reservations found</td></tr>';
-                    return;
-                }
-                
-                // 存储预订数据供后续使用
-                window.reservationsData = reservations;
-                
-                reservations.forEach(reservation => {
-                    // 获取学号信息
-                    const studentId = getStudentId(reservation);
-                    
-                    const tr = document.createElement('tr');
-                    
-                    tr.innerHTML = `
-                        <td><input type="checkbox" name="reservation-checkbox" value="${reservation.id}"></td>
-                        <td>${reservation.id}</td>
-                        <td>${reservation.room ? reservation.room.name : (reservation.roomName || 'N/A')}</td>
-                        <td>${studentId}</td>
-                        <td>${formatDate(reservation.date)}</td>
-                        <td>${reservation.startTime} - ${reservation.endTime}</td>
-                        <td>${truncateText(reservation.purpose, 30)}</td>
-                        <td><span class="status-label ${getStatusClass(reservation)}">${getStatusText(reservation)}</span></td>
-                        <td>
-                            <div class="btn-group">
-                                <button class="btn btn-sm btn-primary view-btn" data-id="${reservation.id}">View</button>
-                                <button class="btn btn-sm btn-danger delete-btn" data-id="${reservation.id}">Delete</button>
-                            </div>
-                        </td>
-                    `;
-                    
-                    tableBody.appendChild(tr);
-                });
-                
-                // 添加复选框事件
-                document.querySelectorAll('input[name="reservation-checkbox"]').forEach(checkbox => {
-                    checkbox.addEventListener('change', updateBulkActions);
-                });
-                
-                // 添加查看按钮事件
-                document.querySelectorAll('.view-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const reservationId = this.getAttribute('data-id');
-                        showReservationDetail(reservationId);
-                    });
-                });
-                
-                // 添加删除按钮事件
-                document.querySelectorAll('.delete-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const reservationId = this.getAttribute('data-id');
-                        showDeleteConfirmation([reservationId]);
-                    });
-                });
-                
-                // 重置全选复选框
-                document.getElementById('selectAll').checked = false;
-                updateBulkActions();
+            .then(() => {
+                alert('预订已成功删除');
+                document.getElementById('deleteConfirmModal').style.display = 'none';
+                loadReservations(); // 重新加载预订列表
             })
             .catch(error => {
-                console.error('Error loading reservations:', error);
-                tableBody.innerHTML = `<tr><td colspan="9" class="text-center">Error: ${error.message}</td></tr>`;
+                console.error('删除预订时出错:', error);
+                alert(`删除预订失败: ${error.message}`);
+            });
+        } else {
+            // 批量删除预订
+            fetch('/api/admin/reservations/batch', {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(reservationIds)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('批量删除预订失败');
+                }
+                return response.text();
+            })
+            .then(() => {
+                alert(`已成功删除 ${reservationIds.length} 个预订`);
+                document.getElementById('deleteConfirmModal').style.display = 'none';
+                loadReservations(); // 重新加载预订列表
+            })
+            .catch(error => {
+                console.error('批量删除预订时出错:', error);
+                alert(`批量删除预订失败: ${error.message}`);
             });
         }
-        
-        // 辅助函数：获取学号
-        function getStudentId(reservation) {
-            // 优先使用userStudentId字段
-            if (reservation.userStudentId) {
-                return reservation.userStudentId;
-            } else if (reservation.user && reservation.user.studentId) {
-                return reservation.user.studentId;
-            } else {
-                return 'N/A';
-            }
-        }
-
-        // 更新批量操作按钮状态
-        function updateBulkActions() {
-            const selectedCount = document.querySelectorAll('input[name="reservation-checkbox"]:checked').length;
-            const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
-            
-            deleteSelectedBtn.disabled = selectedCount === 0;
-            deleteSelectedBtn.textContent = `Delete Selected (${selectedCount})`;
-        }
-
-        // 获取选中的预订ID
-        function getSelectedReservationIds() {
-            return Array.from(document.querySelectorAll('input[name="reservation-checkbox"]:checked'))
-                .map(checkbox => checkbox.value);
-        }
-
-        // 显示预订详情
-        function showReservationDetail(reservationId) {
-            // 查找预订
-            const reservation = window.reservationsData.find(r => r.id == reservationId);
-            
-            if (!reservation) {
-                alert('Reservation not found');
-                return;
-            }
-            
-            // 获取学号
-            const studentId = getStudentId(reservation);
-            
-            // 设置详情内容
-            document.getElementById('detail-id').textContent = reservation.id;
-            document.getElementById('detail-room').textContent = reservation.room ? 
-                `${reservation.room.name} (${reservation.room.location})` : 
-                (reservation.roomName ? `${reservation.roomName} (${reservation.roomLocation || 'Unknown location'})` : 'N/A');
-            document.getElementById('detail-student-id').textContent = studentId;
-            document.getElementById('detail-date').textContent = formatDate(reservation.date);
-            document.getElementById('detail-time').textContent = `${reservation.startTime} - ${reservation.endTime}`;
-            document.getElementById('detail-attendees').textContent = reservation.attendeesCount || 'Not specified';
-            document.getElementById('detail-purpose').textContent = reservation.purpose || 'Not specified';
-            document.getElementById('detail-status').innerHTML = `<span class="status-label ${getStatusClass(reservation)}">${getStatusText(reservation)}</span>`;
-            
-            // 设置删除按钮事件
-            document.getElementById('deleteReservationBtn').onclick = function() {
-                document.getElementById('reservationDetailModal').style.display = 'none';
-                showDeleteConfirmation([reservationId]);
-            };
-            
-            // 显示模态框
-            document.getElementById('reservationDetailModal').style.display = 'block';
-        }
-
-        // 显示删除确认
-        function showDeleteConfirmation(reservationIds) {
-            // 保存要删除的ID
-            document.getElementById('confirmDeleteBtn').setAttribute('data-ids', JSON.stringify(reservationIds));
-            
-            // 更新确认文本
-            const confirmationText = reservationIds.length > 1 
-                ? `Are you sure you want to delete ${reservationIds.length} reservations?` 
-                : 'Are you sure you want to delete this reservation?';
-            
-            document.querySelector('#deleteConfirmModal p:first-of-type').textContent = confirmationText;
-            
-            // 设置确认按钮事件
-            document.getElementById('confirmDeleteBtn').onclick = function() {
-                const ids = JSON.parse(this.getAttribute('data-ids'));
-                deleteReservations(ids);
-            };
-            
-            // 显示模态框
-            document.getElementById('deleteConfirmModal').style.display = 'block';
-        }
-
-        // 删除预订
-        function deleteReservations(reservationIds) {
-            // 显示加载状态
-            const confirmBtn = document.getElementById('confirmDeleteBtn');
-            const originalText = confirmBtn.textContent;
-            confirmBtn.textContent = 'Deleting...';
-            confirmBtn.disabled = true;
-            
-            const token = localStorage.getItem('token');
-            
-            // 单个删除还是批量删除
-            if (reservationIds.length === 1) {
-                // 单个删除
-                fetch(`/api/admin/reservations/${reservationIds[0]}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to delete reservation');
-                    }
-                    
-                    alert('Reservation deleted successfully');
-                    document.getElementById('deleteConfirmModal').style.display = 'none';
-                    loadReservations(); // 重新加载预订列表
-                })
-                .catch(error => {
-                    console.error('Error deleting reservation:', error);
-                    alert('Error: ' + error.message);
-                })
-                .finally(() => {
-                    confirmBtn.textContent = originalText;
-                    confirmBtn.disabled = false;
-                });
-            } else {
-                // 批量删除
-                fetch('/api/admin/reservations/batch', {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(reservationIds)
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to delete reservations');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    alert(`Successfully deleted ${data.count} reservations`);
-                    document.getElementById('deleteConfirmModal').style.display = 'none';
-                    loadReservations(); // 重新加载预订列表
-                })
-                .catch(error => {
-                    console.error('Error deleting reservations:', error);
-                    alert('Error: ' + error.message);
-                })
-                .finally(() => {
-                    confirmBtn.textContent = originalText;
-                    confirmBtn.disabled = false;
-                });
-            }
-        }
+    }
     </script>
 </body>
 </html> 

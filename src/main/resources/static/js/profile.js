@@ -1,9 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
+    console.log("Profile page loaded, checking authentication...");
+    
     // 检查用户是否已登录
     if (!authStorage.isAuthenticated()) {
+        console.log("Not authenticated, redirecting to login page");
         window.location.href = 'login.html';
         return;
     }
+    
+    console.log("User is authenticated, loading profile data");
     
     const passwordModal = document.getElementById('passwordModal');
     const closeModalBtn = document.querySelector('.close');
@@ -15,15 +20,33 @@ document.addEventListener('DOMContentLoaded', function() {
     // 加载预订统计
     loadReservationStats();
     
-    // 关闭模态框
-    closeModalBtn.addEventListener('click', function() {
-        passwordModal.style.display = 'none';
+    // 检查是否有新的预订需要刷新统计数据
+    checkForReservationUpdates();
+    
+    // 设置删除账户按钮点击事件
+    const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+    if (deleteAccountBtn) {
+        deleteAccountBtn.addEventListener('click', function() {
+            document.getElementById('deleteAccountModal').style.display = 'block';
+        });
+    }
+
+    // 设置删除确认和取消按钮
+    document.getElementById('confirmDeleteBtn')?.addEventListener('click', deleteUserAccount);
+    document.getElementById('cancelDeleteBtn')?.addEventListener('click', function() {
+        document.getElementById('deleteAccountModal').style.display = 'none';
+    });
+    
+    // 设置关闭按钮
+    document.querySelector('.close')?.addEventListener('click', function() {
+        document.getElementById('deleteAccountModal').style.display = 'none';
     });
     
     // 点击模态框外部关闭模态框
     window.addEventListener('click', function(event) {
-        if (event.target === passwordModal) {
-            passwordModal.style.display = 'none';
+        const modal = document.getElementById('deleteAccountModal');
+        if (event.target === modal) {
+            modal.style.display = 'none';
         }
     });
     
@@ -55,15 +78,18 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 函数：加载用户资料
     function loadUserProfile() {
+        console.log("Loading user profile data...");
+        
         userApi.getUserProfile()
             .then(profile => {
-                // 显示用户资料
-                document.getElementById('studentId').textContent = profile.studentId;
-                document.getElementById('username').textContent = profile.username;
-                document.getElementById('email').textContent = profile.email;
+                console.log("User profile loaded:", profile);
                 
-                // 设置头像 - 添加调试信息
-                console.log("Avatar URL from profile:", profile.avatarUrl);
+                // 显示用户资料
+                document.getElementById('studentId').textContent = profile.studentId || 'N/A';
+                document.getElementById('username').textContent = profile.username || 'N/A';
+                document.getElementById('email').textContent = profile.email || 'N/A';
+                
+                // 设置头像
                 if (profile.avatarUrl) {
                     const userAvatar = document.getElementById('userAvatar');
                     userAvatar.src = profile.avatarUrl;
@@ -75,41 +101,75 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => {
                 console.error('Error loading profile:', error);
-                alert('Failed to load profile: ' + error.message);
             });
     }
     
     // 函数：加载预订统计
     function loadReservationStats() {
-        reservationApi.getUserReservations()
-            .then(reservations => {
-                const now = new Date();
-                let upcomingCount = 0;
-                let pastCount = 0;
+        console.log("Loading reservation statistics...");
+        
+        // 获取预订数据并计算统计信息
+        fetch('/api/reservations', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to load reservations');
+            }
+            return response.json();
+        })
+        .then(reservations => {
+            if (!Array.isArray(reservations)) {
+                throw new Error('Invalid reservation data format');
+            }
+            
+            // 统计信息初始化
+            let totalCount = 0;
+            let upcomingCount = 0;
+            let pastCount = 0;
+            
+            // 计算统计数据
+            const now = new Date();
+            
+            reservations.forEach(reservation => {
+                // 跳过已取消的预订
+                if (reservation.cancelled) {
+                    return;
+                }
                 
-                // 计算统计数据
-                reservations.forEach(reservation => {
+                totalCount++;
+                
+                try {
+                    // 解析日期和时间
                     const reservationDate = new Date(reservation.date);
-                    const endTimeParts = reservation.endTime.split(':');
-                    reservationDate.setHours(parseInt(endTimeParts[0], 10));
-                    
-                    if (!reservation.cancelled) {
-                        if (reservationDate > now) {
-                            upcomingCount++;
-                        } else {
-                            pastCount++;
-                        }
+                    if (reservation.endTime) {
+                        const [hours, minutes] = reservation.endTime.split(':').map(Number);
+                        reservationDate.setHours(hours, minutes || 0);
                     }
-                });
-                
-                // 显示统计数据
-                document.getElementById('totalReservations').textContent = upcomingCount + pastCount;
-                document.getElementById('upcomingReservations').textContent = upcomingCount;
-                document.getElementById('pastReservations').textContent = pastCount;
-            })
-            .catch(error => {
-                console.error('Error loading reservation stats:', error);
+                    
+                    // 判断是否是未来的预订
+                    if (reservationDate > now) {
+                        upcomingCount++;
+                    } else {
+                        pastCount++;
+                    }
+                } catch (e) {
+                    console.error('Error processing reservation date:', e);
+                }
             });
+            
+            // 更新统计数据显示
+            document.getElementById('totalReservations').textContent = totalCount;
+            document.getElementById('upcomingReservations').textContent = upcomingCount;
+            document.getElementById('pastReservations').textContent = pastCount;
+        })
+        .catch(error => {
+            console.error('Error loading reservation stats:', error);
+        });
     }
     
     // 函数：修改密码
@@ -123,5 +183,50 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => {
                 alert('Failed to change password: ' + error.message);
             });
+    }
+    
+    // 函数：检查是否有新的预订更新
+    function checkForReservationUpdates() {
+        const statsUpdated = localStorage.getItem('reservationStatsUpdated');
+        if (statsUpdated === 'true') {
+            // 重新加载预订统计
+            loadReservationStats();
+            // 重置标志
+            localStorage.removeItem('reservationStatsUpdated');
+        }
+    }
+    
+    // 函数：删除用户账户
+    function deleteUserAccount() {
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        if (loadingOverlay) loadingOverlay.style.display = 'flex';
+        
+        fetch('/api/users/profile', {
+            method: 'DELETE',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to delete account');
+            }
+            return response.text();
+        })
+        .then(() => {
+            alert('Your account has been successfully deleted');
+            // 清除本地存储的认证信息
+            localStorage.removeItem('token');
+            localStorage.removeItem('username');
+            localStorage.removeItem('role');
+            // 跳转到首页
+            window.location.href = 'index.html';
+        })
+        .catch(error => {
+            console.error('Error deleting account:', error);
+            alert('Failed to delete account: ' + error.message);
+            if (loadingOverlay) loadingOverlay.style.display = 'none';
+            document.getElementById('deleteAccountModal').style.display = 'none';
+        });
     }
 }); 

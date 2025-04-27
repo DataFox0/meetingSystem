@@ -95,6 +95,11 @@ function initDatePicker() {
     dateInput.min = formatDateForInput(today);
     dateInput.value = formatDateForInput(today);
     
+    // 设置日期最大值为今天+6天（共7天）
+    const maxDate = new Date(today);
+    maxDate.setDate(maxDate.getDate() + 6);
+    dateInput.max = formatDateForInput(maxDate);
+    
     // 初始化日期选项卡
     initDateTabs(today);
     
@@ -255,57 +260,70 @@ function handleTimeSlotSelection(event) {
     const timeSlotsGrid = document.getElementById('timeSlotsGrid');
     const allSlots = timeSlotsGrid.querySelectorAll('.time-slot');
     
-    // 如果点击的是已选择的时间段，则取消选择
+    // 获取所有可用时间段
+    const availableSlots = Array.from(allSlots).filter(slot => 
+        slot.classList.contains('available')
+    );
+    
+    // 检查是否已有选择
+    const selectedSlots = timeSlotsGrid.querySelectorAll('.time-slot.selected');
+    const hasSelection = selectedSlots.length > 0;
+    
+    // 如果点击的是已选择的时间段，则取消所有选择
     if (clickedSlot.classList.contains('selected')) {
         allSlots.forEach(slot => slot.classList.remove('selected'));
         resetTimeSelection();
         return;
     }
     
-    // 获取所有可用时间段
-    const availableSlots = Array.from(allSlots).filter(slot => 
-        slot.classList.contains('available')
-    );
+    // 如果没有选择，直接选择点击的时间段
+    if (!hasSelection) {
+        clickedSlot.classList.add('selected');
+        const startTime = clickedSlot.dataset.time;
+        const endTime = getEndTimeFromSlot(startTime);
+        updateTimeSelection(startTime, endTime);
+        return;
+    }
     
-    // 找到点击的时间段在数组中的索引
-    const selectedIndex = availableSlots.indexOf(clickedSlot);
+    // 如果已有选择，则这是第二次点击，计算时间范围
+    const firstSlot = selectedSlots[0];
+    const firstIndex = Array.from(allSlots).indexOf(firstSlot);
+    const currentIndex = Array.from(allSlots).indexOf(clickedSlot);
     
-    // 重置所有选择
-    allSlots.forEach(slot => slot.classList.remove('selected'));
+    // 确定开始和结束索引
+    let startIndex = Math.min(firstIndex, currentIndex);
+    let endIndex = Math.max(firstIndex, currentIndex);
     
-    // 选择当前点击的时间段
-    clickedSlot.classList.add('selected');
+    // 检查是否超过3小时（3个时间段）
+    if (endIndex - startIndex >= 3) {
+        alert('You can only book up to 3 hours at a time');
+        return;
+    }
     
-    // 确定可以连续选择的时间段（最多3小时）
-    let startIndex = selectedIndex;
-    let endIndex = selectedIndex;
-    
-    // 尝试向后选择时间段（最多2个额外时间段）
-    for (let i = 1; i <= 2; i++) {
-        const nextIndex = selectedIndex + i;
-        
-        // 检查是否存在下一个时间段且是连续的
-        if (nextIndex < availableSlots.length) {
-            const currentSlot = availableSlots[nextIndex - 1];
-            const nextSlot = availableSlots[nextIndex];
-            
-            const currentTime = parseTimeString(currentSlot.dataset.time);
-            const nextTime = parseTimeString(nextSlot.dataset.time);
-            
-            // 检查是否连续（差1小时）
-            if (nextTime - currentTime === 3600000) {
-                nextSlot.classList.add('selected');
-                endIndex = nextIndex;
-            } else {
-                break;
-            }
-        } else {
+    // 检查中间的时间段是否都可用
+    let allAvailable = true;
+    for (let i = startIndex; i <= endIndex; i++) {
+        if (!allSlots[i].classList.contains('available')) {
+            allAvailable = false;
             break;
         }
     }
     
-    // 更新选择的时间信息
-    updateTimeSelection(availableSlots[startIndex].dataset.time, getEndTimeFromSlot(availableSlots[endIndex].dataset.time));
+    if (!allAvailable) {
+        alert('All time slots in the range must be available');
+        return;
+    }
+    
+    // 清除之前的选择，选择新的范围
+    allSlots.forEach(slot => slot.classList.remove('selected'));
+    for (let i = startIndex; i <= endIndex; i++) {
+        allSlots[i].classList.add('selected');
+    }
+    
+    // 更新时间信息
+    const startTime = allSlots[startIndex].dataset.time;
+    const endTime = getEndTimeFromSlot(allSlots[endIndex].dataset.time);
+    updateTimeSelection(startTime, endTime);
 }
 
 // 更新选择的时间信息
@@ -402,6 +420,9 @@ function handleReservationSubmit(event) {
     // 提交预订
     reservationApi.createReservation(reservationData)
         .then(reservation => {
+            // 预订成功后更新本地存储中的统计数据
+            localStorage.setItem('reservationStatsUpdated', 'true');
+            
             alert('Reservation created successfully');
             window.location.href = 'my-reservations.html';
         })

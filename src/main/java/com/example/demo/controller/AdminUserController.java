@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.ReservationDto;
 import com.example.demo.dto.UserDto;
 import com.example.demo.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,16 @@ public class AdminUserController {
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {
         return ResponseEntity.ok(adminService.getAllUsers());
+    }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
+        return ResponseEntity.ok(adminService.getUserById(id));
+    }
+    
+    @GetMapping("/{id}/reservations")
+    public ResponseEntity<List<ReservationDto>> getUserReservations(@PathVariable Long id) {
+        return ResponseEntity.ok(adminService.getUserReservations(id));
     }
 
     @PutMapping("/{id}/lock")

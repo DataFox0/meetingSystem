@@ -203,6 +203,9 @@ function confirmCancelReservation(reservationId) {
 function cancelReservation(reservationId) {
     reservationApi.cancelReservation(reservationId)
         .then(() => {
+            // 设置标志以通知 profile 页面数据已更新
+            localStorage.setItem('reservationStatsUpdated', 'true');
+            
             alert('Reservation cancelled successfully');
             // 重新加载预订
             loadReservations();

@@ -4,36 +4,125 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meeting Reservation System</title>
+    <link rel="stylesheet" href="css/modern-styles.css">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        
+        .modern-card {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 2.5rem;
+            background-color: #fff;
+            margin: 3rem auto;
+        }
+        
+        .page-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+        
+        .intro p {
+            color: var(--gray-dark);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .btn-primary i {
+            margin-right: 0.5rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 108, 247, 0.2);
+        }
+        
+        .btn-secondary {
+            background-color: #f8f9fa;
+            color: var(--gray-dark);
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .btn-secondary i {
+            margin-right: 0.5rem;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e9ecef;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Welcome to Meeting Reservation System</h1>
-            <nav id="navBar">
-                <ul>
-                    <li><a href="index.html" class="active">Home</a></li>
-                    <li><a href="login.html">Login</a></li>
-                    <li><a href="register.html">Register</a></li>
-                </ul>
-            </nav>
+        <header class="site-header modern-navbar">
+            <div class="header-container">
+                <div class="site-logo">
+                    <img src="images/logo.svg" alt="Meeting Reservation System Logo" style="height:40px;">
+                    <h1 class="logo-title">Meeting Reservation System</h1>
+                </div>
+                <nav>
+                    <ul class="nav-menu">
+                        <li class="nav-item"><a href="index.html" class="nav-link active"><i class="fas fa-home"></i> Home</a></li>
+                        <li class="nav-item"><a href="login.html" class="nav-link"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                        <li class="nav-item"><a href="register.html" class="nav-link"><i class="fas fa-user-plus"></i> Register</a></li>
+                    </ul>
+                </nav>
+            </div>
         </header>
-
         <main>
-            <section class="intro">
-                <h2>About Our System</h2>
-                <p>Our meeting reservation system helps you efficiently manage meeting spaces within the university.</p>
-                <p>Register with your university student ID to start using the system.</p>
-                <p><a href="api/test/hello" class="btn">Test API</a></p>
-                <p><a href="api/test/db-status" class="btn">Test Database Connection</a></p>
+            <section class="intro modern-card">
+                <h2 class="page-title"><i class="fas fa-info-circle"></i> About Our System</h2>
+                <p>Our meeting reservation system helps you efficiently manage meeting spaces within the university. We provide an easy-to-use platform for booking and managing meeting rooms.</p>
+                <p>Register with your university student ID to start using the system and enjoy a seamless reservation experience.</p>
+                <div class="btn-group" style="margin-top:2rem;">
+                  <a href="api/test/hello" class="btn btn-primary"><i class="fas fa-code"></i> Test API</a>
+                  <a href="api/test/db-status" class="btn btn-secondary"><i class="fas fa-database"></i> Test Database Connection</a>
+                </div>
             </section>
         </main>
-
-        <footer>
-            <p>&copy; 2025 Meeting Reservation System</p>
+        <footer class="site-footer">
+            <div class="footer-content">
+                <p class="footer-text">&copy; 2025 Meeting Reservation System. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="privacy-policy.html" class="footer-link">Privacy Policy</a>
+                    <a href="terms-of-service.html" class="footer-link">Terms of Service</a>
+                    <a href="contact.html" class="footer-link">Contact Us</a>
+                </div>
+            </div>
         </footer>
     </div>
-
     <script src="js/api.js"></script>
     <script src="js/script.js"></script>
 </body>

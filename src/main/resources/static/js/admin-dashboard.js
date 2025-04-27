@@ -1,3 +1,9 @@
+// Add real-time updates for recent activity
+let activityUpdateInterval;
+
+// Add实时更新仪表盘状态的功能
+let dashboardStatsInterval;
+
 document.addEventListener('DOMContentLoaded', function() {
     // 检查是否是管理员
     if (!isAdmin()) {
@@ -20,7 +26,43 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 加载最近活动
     loadRecentActivity();
+    
+    // 设置实时更新所有数据
+    setupRealtimeUpdates();
 });
+
+// 新增函数：设置实时更新所有数据
+function setupRealtimeUpdates() {
+    // 清除可能存在的定时器
+    if (dashboardStatsInterval) {
+        clearInterval(dashboardStatsInterval);
+    }
+    if (activityUpdateInterval) {
+        clearInterval(activityUpdateInterval);
+    }
+    
+    // 设置每分钟更新统计数据的定时器
+    dashboardStatsInterval = setInterval(function() {
+        loadDashboardStats();
+        console.log("实时更新仪表盘统计数据...");
+    }, 60000); // 每分钟更新一次
+    
+    // 设置每30秒更新活动列表的定时器
+    activityUpdateInterval = setInterval(function() {
+        loadRecentActivity();
+        console.log("实时更新活动列表...");
+    }, 30000); // 每30秒更新一次
+    
+    // 页面卸载时清除定时器
+    window.addEventListener('beforeunload', function() {
+        if (dashboardStatsInterval) {
+            clearInterval(dashboardStatsInterval);
+        }
+        if (activityUpdateInterval) {
+            clearInterval(activityUpdateInterval);
+        }
+    });
+}
 
 // 检查是否是管理员
 function isAdmin() {
@@ -28,82 +70,123 @@ function isAdmin() {
     return auth && auth.token && auth.role === 'ADMIN';
 }
 
-// 加载仪表盘统计数据
+// 修改加载仪表盘统计数据的函数，使其更准确
 function loadDashboardStats() {
-    // 在实际应用中应该从后端获取
-    // 这里为了演示使用模拟数据
+    // 显示加载状态
+    document.getElementById('roomCount').innerHTML = '<small><i class="fas fa-spinner fa-spin"></i></small>';
+    document.getElementById('reservationCount').innerHTML = '<small><i class="fas fa-spinner fa-spin"></i></small>';
+    document.getElementById('userCount').innerHTML = '<small><i class="fas fa-spinner fa-spin"></i></small>';
+    document.getElementById('todayReservationCount').innerHTML = '<small><i class="fas fa-spinner fa-spin"></i></small>';
     
     // 会议室总数
     adminApi.getAllRooms()
         .then(rooms => {
-            document.getElementById('roomCount').textContent = rooms.length;
+            console.log("加载会议室:", rooms);
+            document.getElementById('roomCount').textContent = rooms && rooms.length ? rooms.length : '0';
         })
         .catch(error => {
             console.error('Error loading room count:', error);
-            document.getElementById('roomCount').textContent = 'Error';
+            document.getElementById('roomCount').textContent = '0';
         });
     
-    // 活跃预订数量
-    adminApi.getAllReservations(null, 'APPROVED')
+    // 活跃预订数量 - 确保过滤掉已取消的和已过期的预订
+    adminApi.getAllReservations()
         .then(reservations => {
-            const activeReservations = reservations.filter(reservation => !reservation.cancelled);
+            console.log("加载预订:", reservations);
+            const now = new Date();
+            
+            // 筛选活跃预订：未取消且未过期
+            const activeReservations = reservations && Array.isArray(reservations) ? 
+                reservations.filter(reservation => {
+                    // 如果已取消，则不是活跃预订
+                    if (reservation.status === 'CANCELLED') return false;
+                    
+                    // 检查预订是否已过期
+                    const reservationEndTime = new Date(`${reservation.date}T${reservation.endTime}`);
+                    return reservationEndTime > now;
+                }) : [];
+                
             document.getElementById('reservationCount').textContent = activeReservations.length;
         })
         .catch(error => {
             console.error('Error loading reservation count:', error);
-            document.getElementById('reservationCount').textContent = 'Error';
+            document.getElementById('reservationCount').textContent = '0';
         });
     
-    // 注册用户数量
+    // 注册用户数量 - 使用更健壮的方式处理用户数据
     adminApi.getAllUsers()
-        .then(users => {
-            document.getElementById('userCount').textContent = users.length;
+        .then(userData => {
+            console.log("加载用户数:", userData);
+            let usersCount = 0;
+            
+            if (userData) {
+                if (userData.content && Array.isArray(userData.content)) {
+                    usersCount = userData.content.length;
+                } else if (Array.isArray(userData)) {
+                    usersCount = userData.length;
+                } else if (userData.totalElements !== undefined) {
+                    usersCount = userData.totalElements;
+                } else if (userData.users && Array.isArray(userData.users)) {
+                    usersCount = userData.users.length;
+                }
+            }
+            
+            document.getElementById('userCount').textContent = usersCount;
         })
         .catch(error => {
             console.error('Error loading user count:', error);
-            document.getElementById('userCount').textContent = 'Error';
+            document.getElementById('userCount').textContent = '0';
         });
     
-    // 今日预订数量
+    // 今日预订数量 - 确保只统计未取消的预订
     const today = new Date().toISOString().split('T')[0];
     adminApi.getAllReservations()
         .then(reservations => {
-            const todayReservations = reservations.filter(reservation => 
-                reservation.date === today && !reservation.cancelled
-            );
+            console.log("加载今日预订:", reservations, "今日日期:", today);
+            const todayReservations = reservations && Array.isArray(reservations) ? 
+                reservations.filter(reservation => 
+                    reservation.date === today && reservation.status !== 'CANCELLED'
+                ) : [];
             document.getElementById('todayReservationCount').textContent = todayReservations.length;
         })
         .catch(error => {
             console.error('Error loading today\'s reservation count:', error);
-            document.getElementById('todayReservationCount').textContent = 'Error';
+            document.getElementById('todayReservationCount').textContent = '0';
         });
 }
 
-// 加载最近活动
+// 加载最近活动 - updated to use API if available
 function loadRecentActivity() {
-    // 实际应用中应该从后端API获取
-    // 这里为了演示使用模拟数据
-    const activityList = [
+    // Try to use the API first
+    if (typeof adminApi !== 'undefined' && adminApi.getRecentActivity) {
+        adminApi.getRecentActivity()
+            .then(activities => {
+                console.log("获取到的活动:", activities);
+                displayRecentActivity(activities);
+            })
+            .catch(error => {
+                console.error('加载最近活动时出错:', error);
+                
+                // Fallback to mock data if API fails
+                const mockActivities = generateMockActivities();
+                displayRecentActivity(mockActivities);
+            });
+    } else {
+        // Fallback to mock data
+        const mockActivities = generateMockActivities();
+        displayRecentActivity(mockActivities);
+    }
+}
+
+// Function to generate mock activities if API not available
+function generateMockActivities() {
+    return [
         { time: new Date(), type: 'ROOM_CREATED', description: 'Created new meeting room: Conference Room A' },
         { time: new Date(Date.now() - 1000 * 60 * 30), type: 'RESERVATION_DELETED', description: 'Deleted reservation #123 for Board Room' },
         { time: new Date(Date.now() - 1000 * 60 * 60), type: 'USER_LOCKED', description: 'Locked user account: johndoe@example.com' },
         { time: new Date(Date.now() - 1000 * 60 * 60 * 2), type: 'ROOM_UPDATED', description: 'Updated meeting room: Training Room' },
         { time: new Date(Date.now() - 1000 * 60 * 60 * 24), type: 'USER_DELETED', description: 'Deleted user account: testuser@example.com' }
     ];
-    
-    displayRecentActivity(activityList);
-    
-    /*
-    // 如果后端有API，应该用下面的代码
-    adminApi.getRecentActivity()
-        .then(activities => {
-            displayRecentActivity(activities);
-        })
-        .catch(error => {
-            console.error('Error loading recent activities:', error);
-            document.getElementById('recentActivityList').innerHTML = '<div class="error-message">Failed to load activities</div>';
-        });
-    */
 }
 
 // 显示最近活动

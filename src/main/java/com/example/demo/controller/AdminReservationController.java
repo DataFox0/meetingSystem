@@ -27,6 +27,11 @@ public class AdminReservationController {
         return ResponseEntity.ok(adminService.getAllReservations(roomId, status));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ReservationDto> getReservationById(@PathVariable Long id) {
+        return ResponseEntity.ok(adminService.getReservationById(id));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, String>> deleteReservation(@PathVariable Long id) {
         adminService.deleteReservation(id);

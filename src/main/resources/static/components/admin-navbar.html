@@ -1,0 +1,42 @@
+<!-- Admin Navbar Component -->
+<header class="site-header modern-navbar">
+  <div class="container">
+    <div class="header-container">
+      <div class="site-logo">
+        <img src="images/logo.svg" alt="Meeting Reservation System Logo">
+        <h1 class="logo-title">Admin Dashboard</h1>
+      </div>
+      <button class="mobile-menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+      </button>
+      <nav>
+        <ul class="nav-menu" id="mainMenu">
+          <li class="nav-item">
+            <a href="admin-dashboard.html" class="nav-link" id="dashboardLink">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a href="admin-rooms.html" class="nav-link" id="roomsLink">Rooms</a>
+          </li>
+          <li class="nav-item">
+            <a href="admin-reservations.html" class="nav-link" id="reservationsLink">Reservations</a>
+          </li>
+          <li class="nav-item">
+            <a href="admin-users.html" class="nav-link" id="usersLink">Users</a>
+          </li>
+          <li class="nav-item user-menu">
+            <div class="user-menu-toggle" id="userMenuToggle">
+              <img src="images/default-avatar.jpg" alt="Admin" class="user-avatar" id="navbarAvatar">
+              <span id="navbarUsername">Admin</span>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="user-menu-dropdown" id="userDropdown">
+              <a href="admin-profile.html" class="dropdown-item">Profile</a>
+              <div class="dropdown-divider"></div>
+              <a href="#" class="dropdown-item" id="logoutBtn">Logout</a>
+            </div>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>

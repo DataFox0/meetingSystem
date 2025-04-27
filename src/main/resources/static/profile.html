@@ -3,35 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile - Meeting Reservation System</title>
+    <title>User Profile - Meeting Reservation System</title>
+    <link rel="stylesheet" href="css/modern-styles.css">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .profile-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        
-        .profile-section {
-            flex: 1;
-            min-width: 300px;
+        body {
+            background-color: #f8f9fa;
         }
         
         .profile-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 20px;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            border-radius: 10px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .profile-header h2 {
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            font-size: 1.8rem;
+        }
+        
+        .profile-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+        
+        .profile-sidebar {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            height: fit-content;
+        }
+        
+        .profile-avatar-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 1.5rem;
         }
         
         .profile-avatar {
             width: 150px;
             height: 150px;
             border-radius: 50%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 700;
+            color: white;
+            background: #3498db;
             overflow: hidden;
-            margin-bottom: 20px;
-            border: 3px solid #ddd;
-            background-color: #f8f8f8;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 4px solid white;
         }
         
         .profile-avatar img {
@@ -40,344 +71,869 @@
             object-fit: cover;
         }
         
-        .profile-data {
-            width: 100%;
-        }
-        
-        .profile-item {
-            display: flex;
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .profile-item .label {
-            flex: 0 0 120px;
-            font-weight: bold;
-            color: #555;
-        }
-        
-        .profile-item .value {
-            flex: 1;
-        }
-        
-        .action-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        
-        .btn-center {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            height: 40px;
-        }
-        
-        .btn-danger {
-            background-color: #dc3545;
+        .avatar-upload {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: #3498db;
             color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
         
-        .btn-danger:hover {
-            background-color: #c82333;
+        .avatar-upload:hover {
+            background: #2980b9;
         }
         
-        /* Modal styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
+        .avatar-upload input {
+            opacity: 0;
+            position: absolute;
             top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-        
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border-radius: 5px;
-            width: 400px;
-            max-width: 80%;
-        }
-        
-        .modal-header {
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
             cursor: pointer;
         }
         
-        .close:hover {
-            color: black;
+        .profile-info {
+            text-align: center;
+            margin-bottom: 2rem;
         }
         
-        /* 添加加载中动画 */
-        .loading-overlay {
+        .profile-name {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0 0 0.25rem 0;
+        }
+        
+        .profile-email {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+            margin: 0 0 0.5rem 0;
+        }
+        
+        .profile-student-id {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            background: #f1f9fe;
+            color: #3498db;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+        
+        .profile-menu {
+            padding-top: 1rem;
+        }
+        
+        .profile-menu-item {
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.75rem;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            color: #34495e;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .profile-menu-item:hover {
+            background: #f5f7f9;
+        }
+        
+        .profile-menu-item.active {
+            background: #3498db;
+            color: white;
+        }
+        
+        .profile-menu-item i {
+            margin-right: 0.75rem;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .profile-content {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .profile-section {
             display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 2000;
-            justify-content: center;
+        }
+        
+        .profile-section.active {
+            display: block;
+        }
+        
+        .profile-section-title {
+            font-size: 1.4rem;
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #f5f5f5;
+            display: flex;
             align-items: center;
         }
         
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
-            border-radius: 50%;
-            animation: spin 2s linear infinite;
+        .profile-section-title i {
+            margin-right: 0.75rem;
+            color: #3498db;
         }
         
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #34495e;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            color: #2c3e50;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            border: none;
+            transition: all 0.3s;
+        }
+        
+        .btn i {
+            margin-right: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        
+        .btn-secondary {
+            background: #f5f7f9;
+            color: #34495e;
+        }
+        
+        .btn-secondary:hover {
+            background: #e8f1f8;
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            border-left: 4px solid transparent;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border-left-color: #28a745;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-left-color: #dc3545;
+        }
+        
+        .alert-info {
+            background-color: #cce5ff;
+            color: #004085;
+            border-left-color: #007bff;
+        }
+        
+        .alert i {
+            margin-right: 0.5rem;
+        }
+        
+        .password-strength {
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .strength-bar {
+            height: 4px;
+            flex: 1;
+            border-radius: 2px;
+            background: #e9ecef;
+            margin-right: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .strength-indicator {
+            height: 100%;
+            width: 0;
+            transition: width 0.3s, background 0.3s;
+        }
+        
+        .strength-text {
+            font-size: 0.85rem;
+            color: #6c757d;
+            min-width: 70px;
+        }
+        
+        .password-hint {
+            padding: 1rem;
+            border-radius: 6px;
+            background: #f8f9fa;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .password-hint ul {
+            margin: 0.5rem 0 0 0;
+            padding-left: 1.2rem;
+        }
+        
+        .password-hint li {
+            margin-bottom: 0.25rem;
+            color: #6c757d;
+        }
+        
+        .password-hint li.valid {
+            color: #28a745;
+        }
+        
+        .password-hint li.valid i {
+            color: #28a745;
+        }
+        
+        .password-hint li i {
+            margin-right: 0.25rem;
+            width: 14px;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .profile-container {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>My Profile</h1>
-            <nav>
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="user-dashboard.html">Dashboard</a></li>
-                    <li><a href="meeting-rooms.html">Meeting Rooms</a></li>
-                    <li><a href="my-reservations.html">My Reservations</a></li>
-                    <li><a href="profile.html" class="active">Profile</a></li>
-                    <li><a href="#" id="logoutBtn">Logout</a></li>
-                </ul>
-            </nav>
+        <header class="site-header modern-navbar">
+            <div class="header-container">
+                <div class="site-logo">
+                    <i class="fas fa-calendar-check" style="font-size: 32px; color: #3498db;"></i>
+                    <h1 class="logo-title">Meeting System</h1>
+                </div>
+                <nav>
+                    <ul class="nav-menu">
+                        <li class="nav-item"><a href="user-dashboard.html" class="nav-link">Dashboard</a></li>
+                        <li class="nav-item"><a href="meeting-rooms.html" class="nav-link">Meeting Rooms</a></li>
+                        <li class="nav-item"><a href="my-reservations.html" class="nav-link">My Reservations</a></li>
+                        <li class="nav-item"><a href="profile.html" class="nav-link active">Profile</a></li>
+                        <li class="nav-item"><a href="#" id="logoutBtn" class="nav-link">Logout</a></li>
+                    </ul>
+                </nav>
+            </div>
         </header>
 
         <main>
-            <div class="profile-container">
-                <section class="profile-section card">
-                    <div class="profile-header">
-                        <div class="profile-avatar">
-                            <img id="userAvatar" src="images/default-avatar.jpg" alt="User Avatar">
-                        </div>
-                        <h2>Personal Information</h2>
-                    </div>
-                    
-                    <div class="profile-data">
-                        <div class="profile-item">
-                            <span class="label">Student ID:</span>
-                            <span id="studentId" class="value"></span>
-                        </div>
-                        <div class="profile-item">
-                            <span class="label">Username:</span>
-                            <span id="username" class="value"></span>
-                        </div>
-                        <div class="profile-item">
-                            <span class="label">Email:</span>
-                            <span id="email" class="value"></span>
-                        </div>
-                    </div>
-                    
-                    <div class="action-buttons">
-                        <a href="edit-profile.html" class="btn btn-center">Edit Profile</a>
-                        <button id="deleteAccountBtn" class="btn btn-danger btn-center">Delete Account</button>
-                    </div>
-                </section>
-                
-                <section class="reservation-stats card">
-                    <h2>Reservation Statistics</h2>
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <h3>Total Reservations</h3>
-                            <span id="totalReservations" class="stat-value">0</span>
-                        </div>
-                        <div class="stat-item">
-                            <h3>Upcoming Reservations</h3>
-                            <span id="upcomingReservations" class="stat-value">0</span>
-                        </div>
-                        <div class="stat-item">
-                            <h3>Past Reservations</h3>
-                            <span id="pastReservations" class="stat-value">0</span>
-                        </div>
-                    </div>
-                    <a href="my-reservations.html" class="btn">View All Reservations</a>
-                </section>
-            </div>
+            <section class="profile-header">
+                <h2><i class="fas fa-user-circle"></i> User Profile</h2>
+                <p>Manage your account information and password</p>
+            </section>
             
-            <!-- Delete Account Confirmation Modal -->
-            <div id="deleteAccountModal" class="modal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <span class="close">&times;</span>
-                        <h2>Confirm Account Deletion</h2>
+            <div id="alertContainer"></div>
+            
+            <section class="profile-container">
+                <div class="profile-sidebar">
+                    <div class="profile-avatar-container">
+                    <div class="profile-avatar" id="profileAvatar">
+                            <!-- Will be filled by JavaScript -->
+                        </div>
+                        <label class="avatar-upload" for="avatarUpload">
+                            <i class="fas fa-camera"></i>
+                            <input type="file" id="avatarUpload" accept="image/*">
+                        </label>
                     </div>
-                    <p>Are you sure you want to delete your account? This action cannot be undone and all your reservations will be cancelled.</p>
-                    <div class="modal-actions">
-                        <button id="cancelDeleteBtn" class="btn btn-secondary">Cancel</button>
-                        <button id="confirmDeleteBtn" class="btn btn-danger">Delete Account</button>
+                    
+                    <div class="profile-info">
+                        <h3 class="profile-name" id="profileName">Loading...</h3>
+                        <p class="profile-email" id="profileEmail">...</p>
+                        <span class="profile-student-id" id="profileStudentId"></span>
+                    </div>
+                    
+                    <div class="profile-menu">
+                        <div class="profile-menu-item active" data-section="account-info">
+                            <i class="fas fa-user"></i> Account Information
+                        </div>
+                        <div class="profile-menu-item" data-section="change-password">
+                            <i class="fas fa-lock"></i> Change Password
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- 加载中动画 -->
-            <div class="loading-overlay" id="loadingOverlay">
-                <div class="loading-spinner"></div>
-            </div>
+                
+                <div class="profile-content">
+                    <div class="profile-section active" id="account-info">
+                        <h3 class="profile-section-title">
+                            <i class="fas fa-user"></i> Account Information
+                        </h3>
+                        
+                        <form id="accountInfoForm">
+                                <div class="form-group">
+                                <label for="username">Username</label>
+                                <input type="text" id="username" name="username" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" name="email" required readonly>
+                                <small style="display: block; margin-top: 0.5rem; color: #6c757d;">Email address cannot be changed</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="studentId">Student ID</label>
+                                <input type="text" id="studentId" name="studentId" required readonly>
+                                <small style="display: block; margin-top: 0.5rem; color: #6c757d;">Student ID cannot be changed</small>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="button" id="resetInfoBtn" class="btn btn-secondary">
+                                    <i class="fas fa-undo"></i> Reset
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div class="profile-section" id="change-password">
+                        <h3 class="profile-section-title">
+                            <i class="fas fa-lock"></i> Change Password
+                        </h3>
+                        
+                        <form id="changePasswordForm">
+                            <div class="form-group">
+                                <label for="currentPassword">Current Password</label>
+                                <input type="password" id="currentPassword" name="currentPassword" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="newPassword">New Password</label>
+                                <input type="password" id="newPassword" name="newPassword" required>
+                                
+                                <div class="password-strength">
+                                    <div class="strength-bar">
+                                        <div class="strength-indicator" id="strengthIndicator"></div>
+                                    </div>
+                                    <span class="strength-text" id="strengthText">Weak</span>
+                                </div>
+                                
+                                <div class="password-hint">
+                                    <strong>Password must:</strong>
+                                    <ul>
+                                        <li id="lengthCheck"><i class="fas fa-times-circle"></i> Be at least 8 characters long</li>
+                                        <li id="uppercaseCheck"><i class="fas fa-times-circle"></i> Include at least one uppercase letter</li>
+                                        <li id="lowercaseCheck"><i class="fas fa-times-circle"></i> Include at least one lowercase letter</li>
+                                        <li id="numberCheck"><i class="fas fa-times-circle"></i> Include at least one number</li>
+                                        <li id="specialCheck"><i class="fas fa-times-circle"></i> Include at least one special character</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm New Password</label>
+                                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="button" id="resetPasswordBtn" class="btn btn-secondary">
+                                    <i class="fas fa-undo"></i> Reset
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Update Password
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
         </main>
 
-        <footer>
-            <p>&copy; 2025 Meeting Reservation System</p>
+        <footer class="site-footer">
+            <div class="footer-content">
+                <p class="footer-text">&copy; 2025 Meeting Reservation System. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="privacy-policy.html" class="footer-link">Privacy Policy</a>
+                    <a href="terms-of-service.html" class="footer-link">Terms of Service</a>
+                    <a href="contact.html" class="footer-link">Contact Us</a>
+                </div>
+            </div>
         </footer>
     </div>
 
     <script src="js/api.js"></script>
-    <script src="js/script.js"></script>
-    <script src="js/nav-bar.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 加载用户资料
-            loadUserProfile();
-            
-            // 删除账号相关事件
-            const deleteAccountBtn = document.getElementById('deleteAccountBtn');
-            const deleteAccountModal = document.getElementById('deleteAccountModal');
-            const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-            const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
-            const closeButtons = document.querySelectorAll('.close');
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            
-            // 打开删除账号确认模态框
-            deleteAccountBtn.addEventListener('click', function() {
-                deleteAccountModal.style.display = 'block';
-            });
-            
-            // 关闭模态框
-            cancelDeleteBtn.addEventListener('click', function() {
-                deleteAccountModal.style.display = 'none';
-            });
-            
-            closeButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    deleteAccountModal.style.display = 'none';
-                });
-            });
-            
-            // 确认删除账号
-            confirmDeleteBtn.addEventListener('click', function() {
-                // 显示加载中动画
-                loadingOverlay.style.display = 'flex';
-                deleteAccountModal.style.display = 'none';
-                
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    alert('You are not logged in. Please log in and try again.');
-                    window.location.href = 'login.html';
-                    return;
-                }
-                
-                fetch('/api/users/account', {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => {
-                    // 隐藏加载中动画
-                    loadingOverlay.style.display = 'none';
-                    
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        throw new Error('Failed to delete account');
-                    }
-                })
-                .then(data => {
-                    alert('Your account has been successfully deleted.');
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('username');
-                    localStorage.removeItem('role');
-                    window.location.href = 'index.html';
-                })
-                .catch(error => {
-                    // 隐藏加载中动画
-                    loadingOverlay.style.display = 'none';
-                    console.error('Error deleting account:', error);
-                    alert('Error: Failed to delete your account. Please try again later.');
-                });
-            });
-            
-            // 点击模态框外部关闭
-            window.addEventListener('click', function(event) {
-                if (event.target === deleteAccountModal) {
-                    deleteAccountModal.style.display = 'none';
-                }
-            });
-        });
-        
-        // 加载用户资料
-        function loadUserProfile() {
-            const token = localStorage.getItem('token');
-            if (!token) {
+            // 检查用户是否已登录
+            if (!authStorage.isAuthenticated()) {
                 window.location.href = 'login.html';
                 return;
             }
             
-            fetch('/api/users/profile', {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to load profile');
-                }
-                return response.json();
-            })
-            .then(profile => {
-                document.getElementById('username').textContent = profile.username;
-                document.getElementById('email').textContent = profile.email;
-                document.getElementById('studentId').textContent = profile.studentId;
-                
-                // 头像显示 - 确保避免缓存问题
-                if (profile.avatarUrl) {
-                    const avatarImg = document.getElementById('userAvatar');
-                    // 添加时间戳以避免缓存
-                    avatarImg.src = profile.avatarUrl + '?t=' + new Date().getTime();
-                    avatarImg.onerror = function() {
-                        this.src = 'images/default-avatar.jpg';
-                    };
-                }
-                
-                // 这里可以加载预订统计数据
-            })
-            .catch(error => {
-                console.error('Error loading profile:', error);
-                alert('Failed to load profile: ' + error.message);
+            // 添加登出事件
+            document.getElementById('logoutBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                authStorage.clearAuth();
+                window.location.href = 'login.html';
             });
+            
+            // 加载用户资料
+            loadUserProfile();
+            
+            // 设置菜单切换
+            setupMenuEvents();
+            
+            // 设置表单事件
+            setupFormEvents();
+            
+            // 设置密码强度检查
+            setupPasswordStrengthMeter();
+            
+            // 设置头像上传
+            setupAvatarUpload();
+        });
+        
+        // 加载用户资料
+        function loadUserProfile() {
+            const { username } = authStorage.getAuth();
+            
+            // 设置一个基于用户名的默认头像
+            setupDefaultAvatar(username);
+            
+            // 从API加载用户详情
+            try {
+                userApi.getUserProfile()
+                    .then(profile => {
+                        // 更新头像和个人信息
+                        if (profile.avatarUrl) {
+                            const avatarEl = document.getElementById('profileAvatar');
+                            avatarEl.innerHTML = `<img src="${profile.avatarUrl}" alt="${profile.username}'s avatar">`;
+                        }
+                        
+                        // 更新侧边栏用户信息
+                        document.getElementById('profileName').textContent = profile.username;
+                    document.getElementById('profileEmail').textContent = profile.email;
+                        document.getElementById('profileStudentId').textContent = `ID: ${profile.studentId || 'Not set'}`;
+                        
+                        // 填充表单
+                        document.getElementById('username').value = profile.username || '';
+                    document.getElementById('email').value = profile.email || '';
+                        document.getElementById('studentId').value = profile.studentId || '';
+                    })
+                    .catch(error => {
+                        console.error('Error loading profile:', error);
+                        showAlert('danger', 'Failed to load profile information. Please try again.');
+                    });
+            } catch (error) {
+                console.error('Exception during profile loading:', error);
+                showAlert('danger', `Error accessing profile: ${error.message}`);
+            }
+        }
+        
+        // 设置默认头像
+        function setupDefaultAvatar(username) {
+            const avatar = document.getElementById('profileAvatar');
+            const firstLetter = username && username.length > 0 ? username.charAt(0).toUpperCase() : 'U';
+            
+            // 为用户生成一个固定的随机颜色
+            const colors = [
+                '#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6',
+                '#1abc9c', '#d35400', '#c0392b', '#16a085', '#8e44ad'
+            ];
+            
+            // 使用用户名的第一个字符的ASCII码值作为索引，安全处理可能的非ASCII字符
+            const charCode = username && username.length > 0 ? username.charCodeAt(0) : 0;
+            const colorIndex = Math.abs(charCode % colors.length);
+            const bgColor = colors[colorIndex];
+            
+            avatar.style.backgroundColor = bgColor;
+            avatar.innerHTML = firstLetter;
+        }
+        
+        // 设置菜单事件
+        function setupMenuEvents() {
+            const menuItems = document.querySelectorAll('.profile-menu-item');
+            
+            menuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // Remove active class from all menu items and sections
+                    menuItems.forEach(mi => mi.classList.remove('active'));
+                    document.querySelectorAll('.profile-section').forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked menu item and corresponding section
+                    this.classList.add('active');
+                    const sectionId = this.getAttribute('data-section');
+                    document.getElementById(sectionId).classList.add('active');
+                });
+            });
+        }
+        
+        // 设置表单事件
+        function setupFormEvents() {
+            // 账户信息表单
+            const accountInfoForm = document.getElementById('accountInfoForm');
+            accountInfoForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const profileData = {
+                    username: document.getElementById('username').value
+                };
+                
+                try {
+                    userApi.updateProfile(profileData)
+                    .then(response => {
+                            showAlert('success', 'Profile updated successfully!');
+                            
+                            // 更新UI和存储的用户名
+                            document.getElementById('profileName').textContent = profileData.username;
+                            
+                            // 更新本地存储的用户名
+                            const auth = authStorage.getAuth();
+                            authStorage.saveAuth(auth.token, profileData.username, auth.role);
+                    })
+                    .catch(error => {
+                        console.error('Error updating profile:', error);
+                            showAlert('danger', `Failed to update profile: ${error.message}`);
+                        });
+                } catch (error) {
+                    console.error('Exception during profile update:', error);
+                    showAlert('danger', `Error during update: ${error.message}`);
+                }
+                    });
+            
+            // 重置账户信息按钮
+            document.getElementById('resetInfoBtn').addEventListener('click', function() {
+                accountInfoForm.reset();
+                loadUserProfile(); // 重新加载原始数据
+            });
+            
+            // 修改密码表单
+            const changePasswordForm = document.getElementById('changePasswordForm');
+            changePasswordForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const currentPassword = document.getElementById('currentPassword').value;
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                
+                // 验证新密码和确认密码是否匹配
+                if (newPassword !== confirmPassword) {
+                    showAlert('danger', 'New password and confirmation do not match.');
+                    return;
+                }
+                
+                // 验证密码强度
+                if (!validatePasswordStrength(newPassword)) {
+                    showAlert('danger', 'Password does not meet the required strength criteria.');
+                    return;
+                }
+                
+                const passwordData = {
+                    currentPassword,
+                    newPassword
+                };
+                
+                try {
+                    // 直接使用fetch来避免可能的API调用问题
+                    const auth = authStorage.getAuth();
+                    fetch('/api/users/password', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${auth.token}`
+                        },
+                        body: JSON.stringify(passwordData)
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            if (response.status === 401) {
+                                throw new Error('Current password is incorrect');
+                            }
+                            return response.json().then(err => {
+                                throw new Error(err.message || 'Error updating password');
+                            });
+                        }
+                        return response.json().catch(() => ({})); // Handle empty responses
+                    })
+                    .then(() => {
+                        showAlert('success', 'Password updated successfully!');
+                        changePasswordForm.reset();
+                        resetPasswordStrength();
+                    })
+                    .catch(error => {
+                        console.error('Error updating password:', error);
+                        showAlert('danger', `Failed to update password: ${error.message}`);
+                    });
+                } catch (error) {
+                    console.error('Exception during password update:', error);
+                    showAlert('danger', `Error: ${error.message}`);
+                }
+            });
+            
+            // 重置密码表单按钮
+            document.getElementById('resetPasswordBtn').addEventListener('click', function() {
+                changePasswordForm.reset();
+                resetPasswordStrength();
+            });
+        }
+        
+        // 设置密码强度检查
+        function setupPasswordStrengthMeter() {
+            const passwordInput = document.getElementById('newPassword');
+            const strengthIndicator = document.getElementById('strengthIndicator');
+            const strengthText = document.getElementById('strengthText');
+            
+            // 密码长度检查
+            const lengthCheck = document.getElementById('lengthCheck');
+            // 大写字母检查
+            const uppercaseCheck = document.getElementById('uppercaseCheck');
+            // 小写字母检查
+            const lowercaseCheck = document.getElementById('lowercaseCheck');
+            // 数字检查
+            const numberCheck = document.getElementById('numberCheck');
+            // 特殊字符检查
+            const specialCheck = document.getElementById('specialCheck');
+            
+            passwordInput.addEventListener('input', function() {
+                const password = this.value;
+                let strength = 0;
+                
+                // 检查并更新各项条件
+                if (password.length >= 8) {
+                    lengthCheck.classList.add('valid');
+                    lengthCheck.innerHTML = '<i class="fas fa-check-circle"></i> Be at least 8 characters long';
+                    strength += 20;
+                } else {
+                    lengthCheck.classList.remove('valid');
+                    lengthCheck.innerHTML = '<i class="fas fa-times-circle"></i> Be at least 8 characters long';
+                }
+                
+                if (/[A-Z]/.test(password)) {
+                    uppercaseCheck.classList.add('valid');
+                    uppercaseCheck.innerHTML = '<i class="fas fa-check-circle"></i> Include at least one uppercase letter';
+                    strength += 20;
+                } else {
+                    uppercaseCheck.classList.remove('valid');
+                    uppercaseCheck.innerHTML = '<i class="fas fa-times-circle"></i> Include at least one uppercase letter';
+                }
+                
+                if (/[a-z]/.test(password)) {
+                    lowercaseCheck.classList.add('valid');
+                    lowercaseCheck.innerHTML = '<i class="fas fa-check-circle"></i> Include at least one lowercase letter';
+                    strength += 20;
+                } else {
+                    lowercaseCheck.classList.remove('valid');
+                    lowercaseCheck.innerHTML = '<i class="fas fa-times-circle"></i> Include at least one lowercase letter';
+                }
+                
+                if (/\d/.test(password)) {
+                    numberCheck.classList.add('valid');
+                    numberCheck.innerHTML = '<i class="fas fa-check-circle"></i> Include at least one number';
+                    strength += 20;
+                } else {
+                    numberCheck.classList.remove('valid');
+                    numberCheck.innerHTML = '<i class="fas fa-times-circle"></i> Include at least one number';
+                }
+                
+                if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+                    specialCheck.classList.add('valid');
+                    specialCheck.innerHTML = '<i class="fas fa-check-circle"></i> Include at least one special character';
+                    strength += 20;
+                } else {
+                    specialCheck.classList.remove('valid');
+                    specialCheck.innerHTML = '<i class="fas fa-times-circle"></i> Include at least one special character';
+                }
+                
+                // 更新强度指示器
+                strengthIndicator.style.width = `${strength}%`;
+                
+                if (strength <= 40) {
+                    strengthIndicator.style.backgroundColor = '#dc3545'; // 红色
+                    strengthText.textContent = 'Weak';
+                } else if (strength <= 80) {
+                    strengthIndicator.style.backgroundColor = '#ffc107'; // 黄色
+                    strengthText.textContent = 'Medium';
+                } else {
+                    strengthIndicator.style.backgroundColor = '#28a745'; // 绿色
+                    strengthText.textContent = 'Strong';
+                }
+            });
+        }
+        
+        // 重置密码强度指示器
+        function resetPasswordStrength() {
+            const strengthIndicator = document.getElementById('strengthIndicator');
+            const strengthText = document.getElementById('strengthText');
+            
+            strengthIndicator.style.width = '0%';
+            strengthText.textContent = 'Weak';
+            
+            // 重置所有检查项
+            document.querySelectorAll('#lengthCheck, #uppercaseCheck, #lowercaseCheck, #numberCheck, #specialCheck').forEach(item => {
+                item.classList.remove('valid');
+                const icon = item.querySelector('i');
+                if (icon) {
+                    icon.className = 'fas fa-times-circle';
+                }
+            });
+            
+            document.getElementById('lengthCheck').innerHTML = '<i class="fas fa-times-circle"></i> Be at least 8 characters long';
+            document.getElementById('uppercaseCheck').innerHTML = '<i class="fas fa-times-circle"></i> Include at least one uppercase letter';
+            document.getElementById('lowercaseCheck').innerHTML = '<i class="fas fa-times-circle"></i> Include at least one lowercase letter';
+            document.getElementById('numberCheck').innerHTML = '<i class="fas fa-times-circle"></i> Include at least one number';
+            document.getElementById('specialCheck').innerHTML = '<i class="fas fa-times-circle"></i> Include at least one special character';
+        }
+        
+        // 验证密码强度
+        function validatePasswordStrength(password) {
+            return password.length >= 8 &&
+                   /[A-Z]/.test(password) &&
+                   /[a-z]/.test(password) &&
+                   /\d/.test(password) &&
+                   /[!@#$%^&*(),.?":{}|<>]/.test(password);
+        }
+        
+        // 设置头像上传
+        function setupAvatarUpload() {
+            const avatarInput = document.getElementById('avatarUpload');
+            
+            avatarInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                // 验证文件类型
+                const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                if (!validTypes.includes(file.type)) {
+                    showAlert('danger', 'Please select a valid image file (JPEG, PNG, or GIF)');
+                    return;
+                }
+                
+                // 验证文件大小 (最大 2MB)
+                if (file.size > 2 * 1024 * 1024) {
+                    showAlert('danger', 'Image file size should not exceed 2MB');
+                    return;
+                }
+                
+                // 创建FormData对象
+                const formData = new FormData();
+                formData.append('avatar', file);
+                
+                // 显示上传中的提示
+                showAlert('info', 'Uploading avatar...');
+                
+                // 上传头像
+                fetch('/api/users/avatar', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authStorage.getAuth().token}`
+                    },
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to upload avatar');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // 更新UI中的头像
+                    const avatarEl = document.getElementById('profileAvatar');
+                    avatarEl.innerHTML = `<img src="${data.avatarUrl}" alt="User avatar">`;
+                    
+                    showAlert('success', 'Avatar updated successfully!');
+                })
+                .catch(error => {
+                    console.error('Error uploading avatar:', error);
+                    showAlert('danger', 'Failed to upload avatar. Please try again.');
+                });
+            });
+        }
+        
+        // 显示提示信息
+        function showAlert(type, message) {
+            const alertContainer = document.getElementById('alertContainer');
+            
+            // 清除之前的提示
+            alertContainer.innerHTML = '';
+            
+            // 设置图标
+            const iconMap = {
+                success: 'fas fa-check-circle',
+                danger: 'fas fa-exclamation-circle',
+                info: 'fas fa-info-circle'
+            };
+            
+            const icon = iconMap[type] || 'fas fa-info-circle';
+            
+            // 创建提示元素
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `<i class="${icon}"></i> ${message}`;
+            
+            // 添加到容器
+            alertContainer.appendChild(alert);
+            
+            // 5秒后自动移除提示
+            setTimeout(() => {
+                alert.style.opacity = '0';
+                setTimeout(() => {
+                    if (alertContainer.contains(alert)) {
+                        alertContainer.removeChild(alert);
+                    }
+                }, 300);
+            }, 5000);
         }
     </script>
 </body>

@@ -57,6 +57,9 @@ public class ReservationService {
         Room room = roomRepository.findById(requestDto.getRoomId())
                 .orElseThrow(() -> new RuntimeException("Room not found"));
         
+        // 验证预订日期不超过未来7天
+        validateDateRange(requestDto.getDate());
+        
         // 验证时间是否为整点
         validateHourlyTimes(requestDto.getStartTime(), requestDto.getEndTime());
         
@@ -129,6 +132,19 @@ public class ReservationService {
         
         if (!conflictingReservations.isEmpty()) {
             throw new RuntimeException("The selected time slot is already booked");
+        }
+    }
+    
+    private void validateDateRange(LocalDate reservationDate) {
+        LocalDate today = LocalDate.now();
+        LocalDate maxAllowedDate = today.plusDays(6); // 今天+6天=7天
+        
+        if (reservationDate.isBefore(today)) {
+            throw new RuntimeException("Reservation date cannot be in the past");
+        }
+        
+        if (reservationDate.isAfter(maxAllowedDate)) {
+            throw new RuntimeException("Reservation can only be made for the next 7 days");
         }
     }
     

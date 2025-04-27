@@ -3,31 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify email - Meeting reservation system</title>
+    <title>Verify Email - Meeting Reservation System</title>
+    <link rel="stylesheet" href="css/modern-styles.css">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        
+        .modern-card {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 3rem;
+            background-color: #fff;
+            text-align: center;
+        }
+        
+        .section-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            font-size: 1.75rem;
+        }
+        
+        .loading-indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            border: 0.25rem solid var(--primary-light);
+            border-right-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spinner 1s linear infinite;
+        }
+        
+        @keyframes spinner {
+            to { transform: rotate(360deg); }
+        }
+        
+        .mb-4 {
+            margin-bottom: 1.5rem;
+            color: var(--gray-dark);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .btn-primary i {
+            margin-right: 0.5rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 108, 247, 0.2);
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Email verification</h1>
-            <nav>
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="login.html">Login</a></li>
-                    <li><a href="register.html">Register</a></li>
-                </ul>
-            </nav>
+        <header class="site-header modern-navbar">
+            <div class="header-container">
+                <div class="site-logo">
+                    <img src="images/logo.svg" alt="Meeting Reservation System Logo" style="height:40px;">
+                    <h1 class="logo-title">Meeting Reservation System</h1>
+                </div>
+                <nav>
+                    <ul class="nav-menu">
+                        <li class="nav-item"><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                        <li class="nav-item"><a href="login.html" class="nav-link"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                        <li class="nav-item"><a href="register.html" class="nav-link"><i class="fas fa-user-plus"></i> Register</a></li>
+                    </ul>
+                </nav>
+            </div>
         </header>
 
         <main>
-            <div class="message-container" id="verificationMessage">
-                <h2>Validating email...</h2>
-                <p>Please wait, the system is processing your verification request.</p>
+            <div class="modern-card" style="max-width:600px;margin:3rem auto;">
+                <div id="verificationMessage">
+                    <div class="loading-indicator">
+                        <div class="spinner-border" role="status"></div>
+                    </div>
+                    <h2 class="section-title"><i class="fas fa-envelope"></i> Validating email...</h2>
+                    <p class="mb-4">Please wait, the system is processing your verification request.</p>
+                </div>
             </div>
         </main>
 
-        <footer>
-            <p>&copy; 2025 Conference Reservation System</p>
+        <footer class="site-footer">
+            <div class="footer-content">
+                <p class="footer-text">&copy; 2025 Meeting Reservation System. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="privacy-policy.html" class="footer-link">Privacy Policy</a>
+                    <a href="terms-of-service.html" class="footer-link">Terms of Service</a>
+                    <a href="contact.html" class="footer-link">Contact Us</a>
+                </div>
+            </div>
         </footer>
     </div>
 
@@ -61,27 +149,31 @@
         
         function showSuccess(message) {
             const container = document.getElementById('verificationMessage');
-            container.className = 'message-container success';
             container.innerHTML = `
-                <h2>Email verification successful!</h2>
-                <p>${message}</p>
-                <div class="btn-container">
-                    <a href="login.html" class="btn">Login Now</a>
+                <div class="success-icon" style="font-size:4rem;color:var(--success-color);margin-bottom:1.5rem;animation:pulse 1.5s infinite;">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2 class="section-title">Email verification successful!</h2>
+                <p class="mb-4">${message}</p>
+                <div>
+                    <a href="login.html" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Login Now</a>
                 </div>
             `;
         }
         
         function showError(message) {
             const container = document.getElementById('verificationMessage');
-            container.className = 'message-container error';
             container.innerHTML = `
-                <h2>Validation failed</h2>
-                <p>${message}</p>
-                <div class="btn-container">
-                    <a href="register.html" class="btn">Return to registration</a>
+                <div class="error-icon" style="font-size:4rem;color:#dc3545;margin-bottom:1.5rem;">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <h2 class="section-title">Validation failed</h2>
+                <p class="mb-4">${message}</p>
+                <div>
+                    <a href="register.html" class="btn btn-primary"><i class="fas fa-user-plus"></i> Return to registration</a>
                 </div>
             `;
         }
     </script>
 </body>
-</html> 
+</html>

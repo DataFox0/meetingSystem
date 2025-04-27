@@ -4,8 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Meeting Reservation System</title>
+    <link rel="stylesheet" href="css/modern-styles.css">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        
         .avatar-preview {
             width: 120px;
             height: 120px;
@@ -21,99 +27,191 @@
             height: 100%;
             object-fit: cover;
         }
+        
+        .form-container {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        
+        .tabs {
+            background-color: #f8f9fa;
+            border-radius: 10px 10px 0 0;
+            padding: 1rem 1rem 0;
+            border-bottom: none;
+        }
+        
+        .tab-btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px 8px 0 0;
+            font-weight: 600;
+            color: var(--gray);
+            transition: all 0.3s;
+        }
+        
+        .tab-btn.active {
+            background-color: #fff;
+            color: var(--primary-color);
+            border-bottom: none;
+            box-shadow: 0 -4px 10px -3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-content {
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        .form-label {
+            color: var(--gray-dark);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control {
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.1);
+            outline: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 108, 247, 0.2);
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Register</h1>
-            <nav>
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="login.html">Login</a></li>
-                    <li><a href="register.html" class="active">Register</a></li>
-                </ul>
-            </nav>
+        <header class="site-header modern-navbar">
+            <div class="header-container">
+                <div class="site-logo">
+                    <img src="images/logo.svg" alt="Meeting Reservation System Logo" style="height:40px;">
+                    <h1 class="logo-title">Meeting Reservation System</h1>
+                </div>
+                <nav>
+                    <ul class="nav-menu">
+                        <li class="nav-item"><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                        <li class="nav-item"><a href="login.html" class="nav-link"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                        <li class="nav-item"><a href="register.html" class="nav-link active"><i class="fas fa-user-plus"></i> Register</a></li>
+                    </ul>
+                </nav>
+            </div>
         </header>
-
         <main>
-            <div class="form-container">
+            <div class="form-container modern-card" style="max-width:520px;margin:3rem auto;">
                 <div class="tabs">
                     <button class="tab-btn active" id="userTabBtn">User Registration</button>
                     <button class="tab-btn" id="adminTabBtn">Admin Registration</button>
                 </div>
-                
                 <div id="userRegisterForm" class="form-content">
                     <form id="registerUserForm" enctype="multipart/form-data">
                         <div class="form-group">
-                            <label for="userStudentId">Student ID</label>
-                            <input type="text" id="userStudentId" name="studentId" required>
+                            <label for="userStudentId" class="form-label"><i class="fas fa-id-card"></i> Student ID</label>
+                            <input type="text" id="userStudentId" name="studentId" class="form-control" placeholder="Enter your student ID" required>
                         </div>
                         <div class="form-group">
-                            <label for="userUsername">Username</label>
-                            <input type="text" id="userUsername" name="username" required>
+                            <label for="userUsername" class="form-label"><i class="fas fa-user"></i> Username</label>
+                            <input type="text" id="userUsername" name="username" class="form-control" placeholder="Choose a username" required>
                         </div>
                         <div class="form-group">
-                            <label for="userEmail">Email</label>
-                            <input type="email" id="userEmail" name="email" required>
+                            <label for="userEmail" class="form-label"><i class="fas fa-envelope"></i> Email</label>
+                            <input type="email" id="userEmail" name="email" class="form-control" placeholder="Enter your email address" required>
                         </div>
                         <div class="form-group">
-                            <label for="userPassword">Password</label>
-                            <input type="password" id="userPassword" name="password" required>
+                            <label for="userPassword" class="form-label"><i class="fas fa-lock"></i> Password</label>
+                            <input type="password" id="userPassword" name="password" class="form-control" placeholder="Create a strong password" required>
+                            <div class="password-requirements" style="background-color: #f8f9fa; padding: 15px; margin-top: 10px; border-radius: 5px;">
+                                <p style="font-weight: bold; margin-bottom: 10px;">Password must:</p>
+                                <ul style="list-style-type: none; padding-left: 5px; margin: 0;">
+                                    <li style="margin-bottom: 5px;" id="length-check"><i class="fas fa-times-circle" style="color: #6c757d; margin-right: 8px;"></i> Be at least 8 characters long</li>
+                                    <li style="margin-bottom: 5px;" id="uppercase-check"><i class="fas fa-times-circle" style="color: #6c757d; margin-right: 8px;"></i> Include at least one uppercase letter</li>
+                                    <li style="margin-bottom: 5px;" id="lowercase-check"><i class="fas fa-times-circle" style="color: #6c757d; margin-right: 8px;"></i> Include at least one lowercase letter</li>
+                                    <li style="margin-bottom: 5px;" id="number-check"><i class="fas fa-times-circle" style="color: #6c757d; margin-right: 8px;"></i> Include at least one number</li>
+                                    <li style="margin-bottom: 5px;" id="special-check"><i class="fas fa-times-circle" style="color: #6c757d; margin-right: 8px;"></i> Include at least one special character</li>
+                                </ul>
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label for="userAvatarFile">Avatar (optional)</label>
-                            <input type="file" id="userAvatarFile" name="avatarFile" accept="image/*">
+                            <label for="userAvatarFile" class="form-label">Avatar (optional)</label>
+                            <input type="file" id="userAvatarFile" name="avatarFile" accept="image/*" class="form-control">
                             <div class="avatar-preview" id="userAvatarPreview">
                                 <img id="userAvatarImg" src="#" alt="Avatar preview">
                             </div>
                         </div>
                         <div class="form-group">
-                            <button type="submit" class="btn">Register</button>
+                            <button type="submit" class="btn btn-primary w-100">Register</button>
                         </div>
                     </form>
                 </div>
-                
                 <div id="adminRegisterForm" class="form-content hide">
                     <form id="registerAdminForm" enctype="multipart/form-data">
                         <div class="form-group">
-                            <label for="adminUsername">Username</label>
-                            <input type="text" id="adminUsername" name="username" required>
+                            <label for="adminUsername" class="form-label">Username</label>
+                            <input type="text" id="adminUsername" name="username" class="form-control" required>
                         </div>
                         <div class="form-group">
-                            <label for="adminEmail">Email</label>
-                            <input type="email" id="adminEmail" name="email" required>
+                            <label for="adminEmail" class="form-label">Email</label>
+                            <input type="email" id="adminEmail" name="email" class="form-control" required>
                         </div>
                         <div class="form-group">
-                            <label for="adminPassword">Password</label>
-                            <input type="password" id="adminPassword" name="password" required>
+                            <label for="adminPassword" class="form-label">Password</label>
+                            <input type="password" id="adminPassword" name="password" class="form-control" required>
+                            <div class="password-requirements" style="background-color: #f8f9fa; padding: 15px; margin-top: 10px; border-radius: 5px;">
+                                <p style="font-weight: bold; margin-bottom: 10px;">Password must:</p>
+                                <ul style="list-style-type: none; padding-left: 5px; margin: 0;">
+                                    <li style="margin-bottom: 5px;" id="admin-length-check"><i class="fas fa-times-circle" style="color: #6c757d; margin-right: 8px;"></i> Be at least 8 characters long</li>
+                                    <li style="margin-bottom: 5px;" id="admin-uppercase-check"><i class="fas fa-times-circle" style="color: #6c757d; margin-right: 8px;"></i> Include at least one uppercase letter</li>
+                                    <li style="margin-bottom: 5px;" id="admin-lowercase-check"><i class="fas fa-times-circle" style="color: #6c757d; margin-right: 8px;"></i> Include at least one lowercase letter</li>
+                                    <li style="margin-bottom: 5px;" id="admin-number-check"><i class="fas fa-times-circle" style="color: #6c757d; margin-right: 8px;"></i> Include at least one number</li>
+                                    <li style="margin-bottom: 5px;" id="admin-special-check"><i class="fas fa-times-circle" style="color: #6c757d; margin-right: 8px;"></i> Include at least one special character</li>
+                                </ul>
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label for="adminInvitationCode">Invitation Code</label>
-                            <input type="text" id="adminInvitationCode" name="invitationCode" required>
+                            <label for="adminInvitationCode" class="form-label">Invitation Code</label>
+                            <input type="text" id="adminInvitationCode" name="invitationCode" class="form-control" required>
                         </div>
                         <div class="form-group">
-                            <label for="adminAvatarFile">Avatar (optional)</label>
-                            <input type="file" id="adminAvatarFile" name="avatarFile" accept="image/*">
+                            <label for="adminAvatarFile" class="form-label">Avatar (optional)</label>
+                            <input type="file" id="adminAvatarFile" name="avatarFile" accept="image/*" class="form-control">
                             <div class="avatar-preview" id="adminAvatarPreview">
                                 <img id="adminAvatarImg" src="#" alt="Avatar preview">
                             </div>
                         </div>
                         <div class="form-group">
-                            <button type="submit" class="btn">Register</button>
+                            <button type="submit" class="btn btn-primary w-100">Register</button>
                         </div>
                     </form>
                 </div>
             </div>
         </main>
-
-        <footer>
-            <p>&copy; 2025 Meeting Reservation System</p>
+        <footer class="site-footer">
+            <div class="footer-content">
+                <p class="footer-text">&copy; 2025 Meeting Reservation System. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="privacy-policy.html" class="footer-link">Privacy Policy</a>
+                    <a href="terms-of-service.html" class="footer-link">Terms of Service</a>
+                    <a href="contact.html" class="footer-link">Contact Us</a>
+                </div>
+            </div>
         </footer>
     </div>
-
-    <!-- 确保首先加载api.js，因为register.js依赖它 -->
     <script src="js/api.js"></script>
     <script src="js/register.js"></script>
 </body>
-</html> 
+</html>

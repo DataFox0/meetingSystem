@@ -4,78 +4,193 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Meeting Reservation System</title>
+    <link rel="stylesheet" href="css/modern-styles.css">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        
+        .form-container {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        
+        .tabs {
+            background-color: #f8f9fa;
+            border-radius: 10px 10px 0 0;
+            padding: 1rem 1rem 0;
+            border-bottom: none;
+        }
+        
+        .tab-btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px 8px 0 0;
+            font-weight: 600;
+            color: var(--gray);
+            transition: all 0.3s;
+        }
+        
+        .tab-btn.active {
+            background-color: #fff;
+            color: var(--primary-color);
+            border-bottom: none;
+            box-shadow: 0 -4px 10px -3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-content {
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        .form-label {
+            color: var(--gray-dark);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control {
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.1);
+            outline: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 108, 247, 0.2);
+        }
+        
+        .btn-secondary {
+            background-color: #f8f9fa;
+            color: var(--gray-dark);
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            transition: all 0.3s;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e9ecef;
+        }
+        
+        .form-footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            color: var(--gray);
+        }
+        
+        .form-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        #dbStatus {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Login</h1>
-            <nav>
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="login.html" class="active">Login</a></li>
-                    <li><a href="register.html">Register</a></li>
-                </ul>
-            </nav>
-        </header>
-
-        <main>
-            <div class="form-container">
-                <div class="tabs">
-                    <button class="tab-btn active" id="userTabBtn">User Login</button>
-                    <button class="tab-btn" id="adminTabBtn">Admin Login</button>
+        <header class="site-header modern-navbar">
+            <div class="header-container">
+                <div class="site-logo">
+                    <img src="images/logo.svg" alt="Meeting Reservation System Logo" style="height:40px;">
+                    <h1 class="logo-title">Meeting Reservation System</h1>
                 </div>
-                
+                <nav>
+                    <ul class="nav-menu">
+                        <li class="nav-item"><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                        <li class="nav-item"><a href="login.html" class="nav-link active"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                        <li class="nav-item"><a href="register.html" class="nav-link"><i class="fas fa-user-plus"></i> Register</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+        <main>
+            <div class="form-container modern-card" style="max-width:480px;margin:3rem auto;">
+                <div class="tabs">
+                    <button class="tab-btn active" id="userTabBtn"><i class="fas fa-user"></i> User Login</button>
+                    <button class="tab-btn" id="adminTabBtn"><i class="fas fa-user-shield"></i> Admin Login</button>
+                </div>
                 <div id="userLoginForm" class="form-content">
                     <form id="loginUserForm">
                         <div class="form-group">
-                            <label for="userEmail">Email</label>
-                            <input type="email" id="userEmail" name="email" required>
+                            <label for="userEmail" class="form-label"><i class="fas fa-envelope"></i> Email</label>
+                            <input type="email" id="userEmail" name="email" class="form-control" placeholder="Enter your email" required>
                         </div>
                         <div class="form-group">
-                            <label for="userPassword">Password</label>
-                            <input type="password" id="userPassword" name="password" required>
+                            <label for="userPassword" class="form-label"><i class="fas fa-lock"></i> Password</label>
+                            <input type="password" id="userPassword" name="password" class="form-control" placeholder="Enter your password" required>
                         </div>
                         <div class="form-group">
-                            <button type="submit" class="btn">Login</button>
+                            <button type="submit" class="btn btn-primary w-100">Login</button>
                         </div>
                         <div class="form-footer">
                             <a href="forgot-password.html?role=user">Forgot Password?</a>
                         </div>
                     </form>
                 </div>
-                
                 <div id="adminLoginForm" class="form-content hide">
                     <form id="loginAdminForm">
                         <div class="form-group">
-                            <label for="adminEmail">Email</label>
-                            <input type="email" id="adminEmail" name="email" required>
+                            <label for="adminEmail" class="form-label"><i class="fas fa-envelope"></i> Email</label>
+                            <input type="email" id="adminEmail" name="email" class="form-control" placeholder="Enter admin email" required>
                         </div>
                         <div class="form-group">
-                            <label for="adminPassword">Password</label>
-                            <input type="password" id="adminPassword" name="password" required>
+                            <label for="adminPassword" class="form-label"><i class="fas fa-lock"></i> Password</label>
+                            <input type="password" id="adminPassword" name="password" class="form-control" placeholder="Enter admin password" required>
                         </div>
                         <div class="form-group">
-                            <button type="submit" class="btn">Login</button>
+                            <button type="submit" class="btn btn-primary w-100">Login</button>
                         </div>
                         <div class="form-footer">
                             <a href="forgot-password.html?role=admin">Forgot Password?</a>
                         </div>
                     </form>
                 </div>
-                
-                <div class="form-footer">
-                    <button id="testDbBtn" class="btn btn-small">Test Database Connection</button>
+                <div class="form-footer" style="margin-top:1.5rem;">
+                    <button id="testDbBtn" class="btn btn-secondary btn-sm">Test Database Connection</button>
                     <div id="dbStatus"></div>
                 </div>
             </div>
         </main>
-
-        <footer>
-            <p>&copy; 2025 Meeting Reservation System</p>
+        <footer class="site-footer">
+            <div class="footer-content">
+                <p class="footer-text">&copy; 2025 Meeting Reservation System. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="privacy-policy.html" class="footer-link">Privacy Policy</a>
+                    <a href="terms-of-service.html" class="footer-link">Terms of Service</a>
+                    <a href="contact.html" class="footer-link">Contact Us</a>
+                </div>
+            </div>
         </footer>
     </div>
-
     <script src="js/api.js"></script>
     <script src="js/login.js"></script>
 </body>

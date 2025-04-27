@@ -1,31 +1,44 @@
 // 统一导航栏处理
 document.addEventListener('DOMContentLoaded', function() {
-    // 获取当前页面URL
-    const currentUrl = window.location.href;
-    const currentPage = currentUrl.substring(currentUrl.lastIndexOf('/') + 1);
+    // 获取当前页面URL，以便高亮当前活动的导航项
+    const currentPage = window.location.pathname.split('/').pop();
     
-    // 设置当前页面导航项为激活状态
-    const navLinks = document.querySelectorAll('nav ul li a');
-    navLinks.forEach(link => {
-        if (link.getAttribute('href') === currentPage) {
-            link.classList.add('active');
-        } else {
-            link.classList.remove('active');
-        }
-    });
+    // 设置导航栏链接
+    const navLinks = [
+        // 删除了Home链接
+        { href: 'user-dashboard.html', text: 'Dashboard' },
+        { href: 'meeting-rooms.html', text: 'Meeting Rooms' },
+        { href: 'my-reservations.html', text: 'My Reservations' },
+        { href: 'profile.html', text: 'Profile' },
+        { href: '#', text: 'Logout', id: 'logoutBtn' }
+    ];
     
-    // 为所有页面的logout按钮添加统一的退出逻辑
-    const logoutBtn = document.getElementById('logoutBtn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // 清除本地存储的令牌和用户信息
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            
-            // 跳转到登录页面
-            window.location.href = 'login.html';
+    // 获取导航菜单
+    const navMenu = document.querySelector('.nav-menu');
+    
+    // 如果导航菜单存在，更新它
+    if (navMenu) {
+        let navHTML = '';
+        
+        navLinks.forEach(link => {
+            const isActive = currentPage === link.href;
+            navHTML += `
+                <li class="nav-item">
+                    <a href="${link.href}" class="nav-link${isActive ? ' active' : ''}"${link.id ? ` id="${link.id}"` : ''}>${link.text}</a>
+                </li>
+            `;
         });
+        
+        navMenu.innerHTML = navHTML;
+        
+        // 为登出按钮添加事件监听器
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                authStorage.clearAuth();
+                window.location.href = 'login.html';
+            });
+        }
     }
 }); 

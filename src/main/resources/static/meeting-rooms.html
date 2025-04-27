@@ -4,149 +4,299 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meeting Rooms - Meeting Reservation System</title>
+    <link rel="stylesheet" href="css/modern-styles.css">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/room-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* 仿照图片2的样式重新设计筛选区域 */
-        .filter-section {
-            padding: 15px;
-            margin-bottom: 20px;
+        body {
+            background-color: #f8f9fa;
         }
         
-        /* 页面主标题样式 */
+        .filter-section {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
         .search-title {
             font-size: 1.5rem;
-            margin-bottom: 20px;
-            color: #333;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
         }
         
         .search-description {
-            color: #666;
-            margin-bottom: 20px;
-            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
         }
         
-        /* 两列布局 */
         .filter-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 2rem;
         }
         
-        /* 左侧筛选条件 */
         .filter-left {
             flex: 0 0 300px;
         }
         
-        /* 右侧筛选条件 */
         .filter-right {
             flex: 1;
             min-width: 200px;
         }
         
-        /* 筛选项标题 */
         .filter-heading {
             font-size: 1rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #444;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: #34495e;
         }
         
-        /* 位置选择器 */
-        .location-selector {
-            width: 100%;
-            display: flex;
+        .filter-group {
+            margin-bottom: 1.5rem;
         }
         
-        .location-selector select {
-            width: 100%;
-            height: 40px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 0 10px;
-        }
-        
-        /* 人数选择器 */
+        .location-selector,
         .capacity-selector {
             width: 100%;
-            display: flex;
-            margin-bottom: 15px;
         }
         
+        .location-selector select,
         .capacity-selector input {
             width: 100%;
-            height: 40px;
+            padding: 0.75rem;
             border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 0 10px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: #2c3e50;
+            transition: all 0.3s;
         }
         
-        /* 设施筛选区域 */
+        .location-selector select:focus,
+        .capacity-selector input:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+        
         .facilities-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 10px;
+            gap: 0.75rem;
         }
         
         .facility-checkbox {
             display: flex;
             align-items: center;
-            background-color: #f5f5f5;
-            padding: 5px 10px;
-            border-radius: 4px;
+            background-color: #f5f7f9;
+            padding: 0.5rem 0.9rem;
+            border-radius: 6px;
             font-size: 0.9rem;
+            color: #34495e;
             cursor: pointer;
+            transition: all 0.3s;
         }
         
         .facility-checkbox:hover {
-            background-color: #eaeaea;
+            background-color: #e8f1f8;
         }
         
         .facility-checkbox input {
-            margin-right: 5px;
+            margin-right: 0.5rem;
         }
         
-        /* 按钮区域 */
         .filter-buttons {
             display: flex;
-            gap: 10px;
-            margin-top: 20px;
+            gap: 1rem;
+            margin-top: 2rem;
         }
         
-        .filter-buttons .btn {
-            padding: 10px 20px;
-            border-radius: 4px;
-            font-weight: bold;
+        .search-btn,
+        .reset-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s;
+            border: none;
         }
         
         .search-btn {
-            background-color: #007bff;
+            background-color: #3498db;
             color: white;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 40px;
-            padding: 0 20px;
-            border-radius: 4px;
+        }
+        
+        .search-btn:hover {
+            background-color: #2980b9;
         }
         
         .reset-btn {
-            background-color: #f8f9fa;
-            color: #333;
-            border: 1px solid #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 40px;
-            padding: 0 20px;
-            border-radius: 4px;
+            background-color: #f5f7f9;
+            color: #34495e;
         }
         
-        /* 正文区域样式调整 */
+        .reset-btn:hover {
+            background-color: #e8f1f8;
+        }
+        
+        .search-btn i,
+        .reset-btn i {
+            margin-right: 0.5rem;
+        }
+        
         .rooms-container {
-            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .room-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .room-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .room-image {
+            height: 180px;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .room-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .room-card:hover .room-image img {
+            transform: scale(1.05);
+        }
+        
+        .room-capacity {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(44, 62, 80, 0.8);
+            color: white;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        
+        .room-capacity i {
+            margin-right: 0.35rem;
+        }
+        
+        .room-content {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        
+        .room-name {
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-size: 1.25rem;
+        }
+        
+        .room-location {
+            display: flex;
+            align-items: center;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .room-location i {
+            margin-right: 0.5rem;
+            color: #3498db;
+        }
+        
+        .room-description {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            flex-grow: 1;
+        }
+        
+        .room-actions {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid #f5f5f5;
+        }
+        
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            border: none;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        
+        .btn-secondary {
+            background: #f5f7f9;
+            color: #34495e;
+        }
+        
+        .btn-secondary:hover {
+            background: #e8f1f8;
+        }
+        
+        .btn i {
+            margin-right: 0.35rem;
+        }
+        
+        .loading {
+            grid-column: 1 / -1;
+            padding: 2rem;
+            text-align: center;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            color: #7f8c8d;
+        }
+        
+        .loading i {
+            margin-right: 0.5rem;
         }
         
         @media (max-width: 768px) {
@@ -157,34 +307,42 @@
             .filter-left, .filter-right {
                 width: 100%;
             }
+            
+            .rooms-container {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Meeting Rooms</h1>
-            <nav>
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="user-dashboard.html">Dashboard</a></li>
-                    <li><a href="meeting-rooms.html" class="active">Meeting Rooms</a></li>
-                    <li><a href="my-reservations.html">My Reservations</a></li>
-                    <li><a href="profile.html">Profile</a></li>
-                    <li><a href="#" id="logoutBtn">Logout</a></li>
-                </ul>
-            </nav>
+        <header class="site-header modern-navbar">
+            <div class="header-container">
+                <div class="site-logo">
+                    <img src="images/logo.svg" alt="Meeting Reservation System Logo" style="height:40px;">
+                    <h1 class="logo-title">Meeting System</h1>
+                </div>
+                <nav>
+                    <ul class="nav-menu">
+                        <li class="nav-item"><a href="user-dashboard.html" class="nav-link">Dashboard</a></li>
+                        <li class="nav-item"><a href="meeting-rooms.html" class="nav-link active">Meeting Rooms</a></li>
+                        <li class="nav-item"><a href="my-reservations.html" class="nav-link">My Reservations</a></li>
+                        <li class="nav-item"><a href="profile.html" class="nav-link">Profile</a></li>
+                        <li class="nav-item"><a href="#" id="logoutBtn" class="nav-link">Logout</a></li>
+                    </ul>
+                </nav>
+            </div>
         </header>
 
         <main>
-            <section class="filter-section card">
+            <section class="filter-section">
                 <h2 class="search-title">Conference Room Search</h2>
                 <p class="search-description">Enter the conditions below to find a suitable meeting room</p>
                 <form id="roomFilterForm">
                     <div class="filter-container">
                         <div class="filter-left">
                             <div class="filter-group">
-                                <div class="filter-heading">Location</div>
+                                <div class="filter-heading"><i class="fas fa-map-marker-alt mr-2"></i> Location</div>
                                 <div class="location-selector">
                                     <select id="location" name="location">
                                         <option value="">All positions</option>
@@ -194,7 +352,7 @@
                             </div>
                             
                             <div class="filter-group">
-                                <div class="filter-heading">Number of people it can accommodate</div>
+                                <div class="filter-heading"><i class="fas fa-users mr-2"></i> Number of people it can accommodate</div>
                                 <div class="capacity-selector">
                                     <input type="number" id="capacity" name="minCapacity" min="1" value="1" placeholder="Enter number of people">
                                 </div>
@@ -203,7 +361,7 @@
                         
                         <div class="filter-right">
                             <div class="filter-group">
-                                <div class="filter-heading">Facility Requirements</div>
+                                <div class="filter-heading"><i class="fas fa-toolbox mr-2"></i> Facility Requirements</div>
                                 <div class="facilities-container" id="facilitiesContainer">
                                     <!-- Facilities will be loaded dynamically -->
                                 </div>
@@ -212,20 +370,33 @@
                     </div>
                     
                     <div class="filter-buttons">
-                        <button type="submit" class="search-btn">Search Rooms</button>
-                        <button type="reset" class="reset-btn">Reset</button>
+                        <button type="submit" class="search-btn">
+                            <i class="fas fa-search"></i> Search Rooms
+                        </button>
+                        <button type="reset" class="reset-btn">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
                     </div>
                 </form>
             </section>
             
             <section class="rooms-container" id="roomsContainer">
                 <!-- Rooms will be loaded dynamically -->
-                <div class="loading">Loading rooms...</div>
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i> Loading rooms...
+                </div>
             </section>
         </main>
 
-        <footer>
-            <p>&copy; 2025 Meeting Reservation System</p>
+        <footer class="site-footer">
+            <div class="footer-content">
+                <p class="footer-text">&copy; 2025 Meeting Reservation System. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="privacy-policy.html" class="footer-link">Privacy Policy</a>
+                    <a href="terms-of-service.html" class="footer-link">Terms of Service</a>
+                    <a href="contact.html" class="footer-link">Contact Us</a>
+                </div>
+            </div>
         </footer>
     </div>
 
@@ -255,6 +426,77 @@
             if (facilitiesContainer) {
                 facilitiesObserver.observe(facilitiesContainer, { childList: true, subtree: true });
             }
+        });
+
+        // 修改displayRooms函数，确保生成的卡片结构一致
+        function displayRooms(rooms) {
+            const roomsContainer = document.getElementById('roomsContainer');
+            
+            if (rooms.length === 0) {
+                roomsContainer.innerHTML = '<div class="no-results">No meeting rooms found</div>';
+                return;
+            }
+            
+            roomsContainer.innerHTML = '';
+            
+            rooms.forEach(room => {
+                // 创建一个结构一致的卡片
+                roomsContainer.innerHTML += `
+                    <div class="room-card">
+                        <div class="room-image">
+                            <img src="${room.imageUrl || 'images/default-room.jpg'}" alt="${room.name}">
+                            <div class="room-capacity">
+                                <i class="fas fa-users"></i> ${room.capacity}
+                            </div>
+                        </div>
+                        <div class="room-content">
+                            <h3 class="room-name">${room.name}</h3>
+                            <div class="room-location">
+                                <i class="fas fa-map-marker-alt"></i> ${room.location}
+                            </div>
+                            <div class="room-description">
+                                ${room.description || 'No description available'}
+                            </div>
+                            <div class="room-actions">
+                                <a href="room-detail.html?id=${room.id}" class="btn btn-secondary">
+                                    <i class="fas fa-info-circle"></i> Details
+                                </a>
+                                <a href="room-detail.html?id=${room.id}&book=true" class="btn btn-primary">
+                                    <i class="fas fa-calendar-plus"></i> Reserve
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            // 强制重新计算网格布局，确保卡片高度一致
+            setTimeout(() => {
+                window.dispatchEvent(new Event('resize'));
+            }, 100);
+        }
+
+        // 页面加载完成后添加这个处理
+        document.addEventListener('DOMContentLoaded', function() {
+            // 其他现有代码...
+            
+            // 添加窗口大小改变时的处理，进一步确保卡片大小一致
+            window.addEventListener('resize', function() {
+                const cards = document.querySelectorAll('.room-card');
+                if (cards.length > 0) {
+                    // 重置高度
+                    cards.forEach(card => card.style.height = 'auto');
+                    
+                    // 找出最大高度
+                    let maxHeight = 0;
+                    cards.forEach(card => {
+                        maxHeight = Math.max(maxHeight, card.offsetHeight);
+                    });
+                    
+                    // 应用最大高度
+                    cards.forEach(card => card.style.height = maxHeight + 'px');
+                }
+            });
         });
     </script>
 </body>

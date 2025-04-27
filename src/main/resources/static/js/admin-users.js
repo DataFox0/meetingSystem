@@ -1,117 +1,189 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // 检查是否是管理员
-    if (!isAdmin()) {
-        window.location.href = 'login.html';
-        return;
-    }
+    // Check if user is admin
+    checkAdminAccess();
     
-    // 加载用户列表
+    // Set up event listeners
+    setupEventListeners();
+    
+    // Load users
     loadUsers();
-    
-    // 设置搜索按钮点击事件
-    document.getElementById('searchBtn').addEventListener('click', function() {
-        const searchQuery = document.getElementById('userSearch').value.trim().toLowerCase();
-        filterUsers(searchQuery);
+});
+
+// Check admin access
+function checkAdminAccess() {
+    const auth = authStorage.getAuth();
+    if (!auth || !auth.token || auth.role !== 'ADMIN') {
+        window.location.href = 'login.html';
+    }
+}
+
+// Set up event listeners
+function setupEventListeners() {
+    // Logout button
+    document.getElementById('logoutBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        authStorage.clearAuth();
+        window.location.href = 'login.html';
     });
     
-    // 设置回车键搜索
-    document.getElementById('userSearch').addEventListener('keypress', function(event) {
-        if (event.key === 'Enter') {
-            event.preventDefault();
+    // Search button
+    document.getElementById('searchBtn').addEventListener('click', function() {
+        const searchQuery = document.getElementById('userSearch').value.trim();
+        loadUsers(searchQuery);
+    });
+    
+    // Enter key in search field
+    document.getElementById('userSearch').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
             document.getElementById('searchBtn').click();
         }
     });
     
-    // 设置模态框关闭事件
-    document.querySelectorAll('.close, .close-btn').forEach(element => {
-        element.addEventListener('click', function() {
-            document.getElementById('userDetailModal').style.display = 'none';
-            document.getElementById('deleteConfirmModal').style.display = 'none';
+    // Modal close buttons
+    document.querySelectorAll('.close, .close-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            closeAllModals();
         });
     });
     
-    // 点击页面其他地方关闭模态框
-    window.addEventListener('click', function(event) {
-        if (event.target.className === 'modal') {
-            event.target.style.display = 'none';
+    // Close modals when clicking outside
+    window.addEventListener('click', function(e) {
+        if (e.target.classList.contains('modal')) {
+            closeAllModals();
         }
     });
-});
-
-// 检查是否是管理员
-function isAdmin() {
-    const auth = authStorage.getAuth();
-    return auth && auth.token && auth.role === 'ADMIN';
 }
 
-// 加载用户列表
-function loadUsers() {
-    adminApi.getAllUsers()
-        .then(users => {
-            // 保存用户列表到页面数据中，方便筛选
+// Close all modals
+function closeAllModals() {
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.style.display = 'none';
+    });
+}
+
+// Load users list
+function loadUsers(searchTerm = '') {
+    const tableBody = document.querySelector('#usersTable tbody');
+    tableBody.innerHTML = `
+        <tr>
+            <td colspan="6" class="text-center">
+                <div class="loading-indicator">
+                    <i class="fas fa-spinner fa-spin"></i> Loading users...
+                </div>
+            </td>
+        </tr>
+    `;
+    
+    adminApi.getAllUsers(0, 100, searchTerm)
+        .then(response => {
+            // Get the users array, depending on the response format
+            let users = [];
+            if (Array.isArray(response)) {
+                users = response;
+            } else if (response.content) {
+                users = response.content;
+            } else if (response.users) {
+                users = response.users;
+            }
+            
+            // Store users globally for filtering
             window.allUsers = users;
-            displayUsers(users);
+            
+            // Display the users
+            displayUsers(users, searchTerm);
         })
         .catch(error => {
             console.error('Error loading users:', error);
-            alert('Failed to load users: ' + error.message);
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center">
+                        <div class="empty-state">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <p>Error loading users: ${error.message}</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            showNotification('Failed to load users: ' + error.message, 'error');
         });
 }
 
-// 显示用户列表
-function displayUsers(users) {
+// Display users in the table
+function displayUsers(users, searchTerm = '') {
     const tableBody = document.querySelector('#usersTable tbody');
-    tableBody.innerHTML = '';
     
-    if (users.length === 0) {
-        const tr = document.createElement('tr');
-        tr.innerHTML = '<td colspan="7" class="text-center">No users found</td>';
-        tableBody.appendChild(tr);
+    if (!users || users.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="6" class="text-center">
+                    <div class="empty-state">
+                        <i class="fas fa-users-slash"></i>
+                        <p>No users found${searchTerm ? ' matching your search' : ''}.</p>
+                    </div>
+                </td>
+            </tr>
+        `;
         return;
     }
     
+    tableBody.innerHTML = '';
+    
     users.forEach(user => {
-        const tr = document.createElement('tr');
+        const row = document.createElement('tr');
         
-        tr.innerHTML = `
+        row.innerHTML = `
             <td>${user.id}</td>
             <td>${user.username}</td>
             <td>${user.email}</td>
             <td>${user.studentId || 'N/A'}</td>
-            <td><span class="status-label ${user.enabled ? 'status-active' : 'status-inactive'}">${user.enabled ? 'Active' : 'Locked'}</span></td>
-            <td><span class="status-label ${user.emailVerified ? 'status-approved' : 'status-pending'}">${user.emailVerified ? 'Verified' : 'Unverified'}</span></td>
+            <td>
+                <span class="status-badge ${user.enabled ? 'status-active' : 'status-locked'}">
+                    ${user.enabled ? 'Active' : 'Locked'}
+                </span>
+            </td>
             <td>
                 <div class="btn-group">
-                    <button class="btn btn-sm btn-primary view-btn" data-id="${user.id}">View</button>
-                    <button class="btn btn-sm ${user.enabled ? 'btn-warning' : 'btn-success'} lock-btn" data-id="${user.id}" data-enabled="${user.enabled}">
-                        ${user.enabled ? 'Lock' : 'Unlock'}
+                    <button class="btn btn-sm btn-primary view-btn" data-id="${user.id}">
+                        <i class="fas fa-eye"></i> View
                     </button>
-                    <button class="btn btn-sm btn-danger delete-btn" data-id="${user.id}">Delete</button>
+                    <button class="btn btn-sm ${user.enabled ? 'btn-warning' : 'btn-success'} lock-btn" data-id="${user.id}" data-enabled="${user.enabled}">
+                        <i class="fas fa-${user.enabled ? 'lock' : 'unlock'}"></i> ${user.enabled ? 'Lock' : 'Unlock'}
+                    </button>
+                    <button class="btn btn-sm btn-danger delete-btn" data-id="${user.id}">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
                 </div>
             </td>
         `;
         
-        tableBody.appendChild(tr);
+        tableBody.appendChild(row);
     });
     
-    // 添加查看按钮事件
+    // Add event listeners to action buttons
+    attachActionButtonListeners();
+}
+
+// Attach event listeners to table action buttons
+function attachActionButtonListeners() {
+    // View buttons
     document.querySelectorAll('.view-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const userId = this.getAttribute('data-id');
-            showUserDetail(userId);
+            showUserDetails(userId);
         });
     });
     
-    // 添加锁定/解锁按钮事件
+    // Lock/Unlock buttons
     document.querySelectorAll('.lock-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const userId = this.getAttribute('data-id');
-            const enabled = this.getAttribute('data-enabled') === 'true';
-            toggleUserLock(userId, enabled);
+            const isEnabled = this.getAttribute('data-enabled') === 'true';
+            toggleUserLock(userId, isEnabled);
         });
     });
     
-    // 添加删除按钮事件
+    // Delete buttons
     document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const userId = this.getAttribute('data-id');
@@ -120,202 +192,159 @@ function displayUsers(users) {
     });
 }
 
-// 筛选用户
-function filterUsers(query) {
-    if (!window.allUsers) return;
-    
-    if (!query) {
-        displayUsers(window.allUsers);
-        return;
-    }
-    
-    const filteredUsers = window.allUsers.filter(user => 
-        user.username.toLowerCase().includes(query) || 
-        user.email.toLowerCase().includes(query) || 
-        (user.studentId && user.studentId.toLowerCase().includes(query))
-    );
-    
-    displayUsers(filteredUsers);
-}
-
-// 显示用户详情
-function showUserDetail(userId) {
-    if (!window.allUsers) return;
-    
-    // 查找用户
+// Show user details in modal
+function showUserDetails(userId) {
     const user = window.allUsers.find(u => u.id == userId);
     
     if (!user) {
-        alert('User not found');
+        showNotification('User not found', 'error');
         return;
     }
     
-    // 设置详情内容
+    // Populate user details
     document.getElementById('detail-id').textContent = user.id;
     document.getElementById('detail-username').textContent = user.username;
     document.getElementById('detail-email').textContent = user.email;
     document.getElementById('detail-studentId').textContent = user.studentId || 'N/A';
     
+    // Status with badge
     const statusElement = document.getElementById('detail-status');
-    statusElement.textContent = user.enabled ? 'Active' : 'Locked';
-    statusElement.className = `detail-value ${user.enabled ? 'status-active' : 'status-inactive'}`;
+    statusElement.innerHTML = `
+        <span class="status-badge ${user.enabled ? 'status-active' : 'status-locked'}">
+            ${user.enabled ? 'Active' : 'Locked'}
+        </span>
+    `;
     
+    // Email verification status
     const emailVerifiedElement = document.getElementById('detail-emailVerified');
-    emailVerifiedElement.textContent = user.emailVerified ? 'Verified' : 'Unverified';
-    emailVerifiedElement.className = `detail-value ${user.emailVerified ? 'status-approved' : 'status-pending'}`;
+    emailVerifiedElement.innerHTML = user.emailVerified ? 'Verified' : 'Not Verified';
     
-    // 设置锁定/解锁按钮
-    const lockUnlockBtn = document.getElementById('lockUnlockUserBtn');
-    lockUnlockBtn.textContent = user.enabled ? 'Lock User' : 'Unlock User';
-    lockUnlockBtn.className = `btn ${user.enabled ? 'btn-warning' : 'btn-success'}`;
+    // Update lock/unlock button
+    const lockUnlockBtn = document.getElementById('lockUnlockBtn');
+    const lockUnlockText = document.getElementById('lockUnlockText');
+    
+    if (user.enabled) {
+        lockUnlockBtn.className = 'btn btn-warning';
+        lockUnlockText.textContent = 'Lock Account';
+        lockUnlockBtn.querySelector('i').className = 'fas fa-lock';
+    } else {
+        lockUnlockBtn.className = 'btn btn-success';
+        lockUnlockText.textContent = 'Unlock Account';
+        lockUnlockBtn.querySelector('i').className = 'fas fa-unlock';
+    }
+    
+    // Set up action button listeners
     lockUnlockBtn.onclick = function() {
-        document.getElementById('userDetailModal').style.display = 'none';
-        toggleUserLock(userId, user.enabled);
+        toggleUserLock(user.id, user.enabled);
     };
     
-    // 设置删除按钮点击事件
     document.getElementById('deleteUserBtn').onclick = function() {
-        document.getElementById('userDetailModal').style.display = 'none';
-        showDeleteConfirmation(userId);
+        closeAllModals();
+        showDeleteConfirmation(user.id);
     };
     
-    // 显示模态框
+    // Show the modal
     document.getElementById('userDetailModal').style.display = 'block';
 }
 
-// 切换用户锁定状态
-function toggleUserLock(userId, currentlyEnabled) {
-    const apiCall = currentlyEnabled ? adminApi.lockUser(userId) : adminApi.unlockUser(userId);
+// Show delete confirmation modal
+function showDeleteConfirmation(userId) {
+    const user = window.allUsers.find(u => u.id == userId);
+    
+    if (!user) {
+        showNotification('User not found', 'error');
+        return;
+    }
+    
+    // Set up confirm delete button
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    confirmDeleteBtn.onclick = function() {
+        deleteUser(userId);
+    };
+    
+    // Show the modal
+    document.getElementById('deleteConfirmModal').style.display = 'block';
+}
+
+// Toggle user lock status
+function toggleUserLock(userId, isCurrentlyEnabled) {
+    const actionText = isCurrentlyEnabled ? 'lock' : 'unlock';
+    const apiCall = isCurrentlyEnabled ? 
+        adminApi.lockUser(userId) : 
+        adminApi.unlockUser(userId);
     
     apiCall
         .then(() => {
-            alert(`User ${currentlyEnabled ? 'locked' : 'unlocked'} successfully`);
-            loadUsers(); // 重新加载用户列表
+            showNotification(`User ${actionText}ed successfully`, 'success');
+            loadUsers(document.getElementById('userSearch').value.trim());
+            closeAllModals();
         })
         .catch(error => {
-            console.error(`Error ${currentlyEnabled ? 'locking' : 'unlocking'} user:`, error);
-            alert(`Failed to ${currentlyEnabled ? 'lock' : 'unlock'} user: ` + error.message);
+            console.error(`Error ${actionText}ing user:`, error);
+            showNotification(`Failed to ${actionText} user: ${error.message}`, 'error');
         });
 }
 
-// 显示删除确认对话框
-function showDeleteConfirmation(userId) {
-    const modal = document.getElementById('deleteConfirmModal');
+// Delete user
+function deleteUser(userId) {
+    // Update UI to show loading
     const confirmBtn = document.getElementById('confirmDeleteBtn');
-    const cancelBtn = document.getElementById('cancelDeleteBtn');
-    const closeBtn = document.querySelector('#deleteConfirmModal .close');
+    const originalText = confirmBtn.innerHTML;
+    confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+    confirmBtn.disabled = true;
     
-    // 存储要删除的用户ID
-    confirmBtn.setAttribute('data-id', userId);
-    
-    // 显示模态框
-    modal.style.display = 'block';
-    
-    // 删除确认
-    confirmBtn.onclick = function() {
-        const id = this.getAttribute('data-id');
-        
-        // 显示加载状态
-        confirmBtn.textContent = 'Deleting...';
-        confirmBtn.disabled = true;
-        
-        adminApi.deleteUser(id)
-            .then(() => {
-                // 成功删除
-                modal.style.display = 'none';
-                alert('User deleted successfully');
-                loadUsers(); // 重新加载用户列表
-            })
-            .catch(error => {
-                console.error('Error deleting user:', error);
-                alert('Failed to delete user: ' + error.message);
-            })
-            .finally(() => {
-                // 恢复按钮状态
-                confirmBtn.textContent = 'Delete';
-                confirmBtn.disabled = false;
-            });
-    };
-    
-    // 取消删除
-    function closeModal() {
-        modal.style.display = 'none';
-    }
-    
-    cancelBtn.onclick = closeModal;
-    closeBtn.onclick = closeModal;
-    
-    // 点击模态框外部关闭
-    window.onclick = function(event) {
-        if (event.target === modal) {
-            closeModal();
-        }
-    };
+    adminApi.deleteUser(userId)
+        .then(() => {
+            closeAllModals();
+            showNotification('User deleted successfully', 'success');
+            loadUsers(document.getElementById('userSearch').value.trim());
+        })
+        .catch(error => {
+            console.error('Error deleting user:', error);
+            showNotification(`Failed to delete user: ${error.message}`, 'error');
+        })
+        .finally(() => {
+            // Reset button
+            confirmBtn.innerHTML = originalText;
+            confirmBtn.disabled = false;
+        });
 }
 
-// 添加通知功能
+// Show notification
 function showNotification(message, type = 'info') {
-    // 如果页面上没有通知容器，创建一个
-    let notificationContainer = document.getElementById('notificationContainer');
-    if (!notificationContainer) {
-        notificationContainer = document.createElement('div');
-        notificationContainer.id = 'notificationContainer';
-        notificationContainer.style.position = 'fixed';
-        notificationContainer.style.top = '20px';
-        notificationContainer.style.right = '20px';
-        notificationContainer.style.zIndex = '1000';
-        document.body.appendChild(notificationContainer);
+    // Create container if it doesn't exist
+    let container = document.getElementById('notificationContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'notificationContainer';
+        document.body.appendChild(container);
     }
     
-    // 创建通知元素
+    // Create notification
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
     notification.innerHTML = `
-        <div class="notification-content">
-            ${message}
-        </div>
+        <div>${message}</div>
         <button class="notification-close">&times;</button>
     `;
     
-    // 设置样式
-    notification.style.padding = '10px 15px';
-    notification.style.marginBottom = '10px';
-    notification.style.borderRadius = '4px';
-    notification.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
-    notification.style.display = 'flex';
-    notification.style.justifyContent = 'space-between';
-    notification.style.alignItems = 'center';
+    // Add to container
+    container.appendChild(notification);
     
-    // 根据类型设置背景色
-    if (type === 'success') {
-        notification.style.backgroundColor = '#d4edda';
-        notification.style.color = '#155724';
-        notification.style.borderColor = '#c3e6cb';
-    } else if (type === 'error') {
-        notification.style.backgroundColor = '#f8d7da';
-        notification.style.color = '#721c24';
-        notification.style.borderColor = '#f5c6cb';
-    } else {
-        notification.style.backgroundColor = '#d1ecf1';
-        notification.style.color = '#0c5460';
-        notification.style.borderColor = '#bee5eb';
-    }
-    
-    // 添加到容器
-    notificationContainer.appendChild(notification);
-    
-    // 关闭按钮
+    // Set up close button
     const closeBtn = notification.querySelector('.notification-close');
-    closeBtn.style.background = 'none';
-    closeBtn.style.border = 'none';
-    closeBtn.style.cursor = 'pointer';
-    closeBtn.style.fontSize = '20px';
-    closeBtn.onclick = function() {
+    closeBtn.addEventListener('click', function() {
         notification.remove();
-    };
+    });
     
-    // 5秒后自动消失
+    // Auto-remove after 5 seconds
     setTimeout(() => {
-        notification.remove();
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateX(100%)';
+        notification.style.transition = 'all 0.3s ease';
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
     }, 5000);
 } 

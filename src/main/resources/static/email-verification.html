@@ -6,15 +6,16 @@
   <title>Email Verification | Meeting Room Reservation System</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/modern-styles.css">
+  <link rel="stylesheet" href="css/styles.css">
   <style>
     body {
-      background-color: #f3f4f6;
-      background-image: url('img/pattern-bg.svg');
-      background-size: cover;
+      background-color: #f8f9fa;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
+      margin: 0;
+      padding: 0;
     }
     
     .verification-container {
@@ -39,6 +40,7 @@
       padding: 2.5rem;
       animation: fadeIn 0.5s ease;
       text-align: center;
+      border: none;
     }
     
     @keyframes fadeIn {
@@ -50,19 +52,36 @@
       font-size: 1.75rem;
       font-weight: 700;
       margin-bottom: 0.5rem;
-      color: #111827;
+      color: var(--primary-color);
     }
     
     .verification-card p {
-      color: #6b7280;
+      color: var(--gray-dark);
       margin-bottom: 1.5rem;
       line-height: 1.6;
+      font-size: 1.1rem;
     }
     
     .verification-icon {
-      font-size: 3.5rem;
+      font-size: 4rem;
       color: var(--primary-color);
       margin-bottom: 1.5rem;
+      animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
     }
     
     .verification-email {
@@ -118,8 +137,43 @@
       width: 100%;
       padding: 0.85rem;
       font-size: 1rem;
-      font-weight: 500;
+      font-weight: 600;
       margin-top: 1rem;
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      border: none;
+      border-radius: 8px;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .btn-verify:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(74, 108, 247, 0.2);
+    }
+    
+    .alert {
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      margin: 1rem 0;
+      display: flex;
+      align-items: center;
+      font-size: 0.9rem;
+    }
+    
+    .alert-danger {
+      background-color: #fee2e2;
+      color: #b91c1c;
+    }
+    
+    .alert-success {
+      background-color: #d1fae5;
+      color: #047857;
+    }
+    
+    .alert i {
+      margin-right: 0.5rem;
     }
     
     /* 响应式调整 */
@@ -139,7 +193,8 @@
 <body>
   <div class="verification-container">
     <div class="logo-container">
-      <img src="img/logo.svg" alt="Meeting Room Reservation System">
+      <img src="images/logo.svg" alt="Meeting Room Reservation System" style="height:60px;">
+      <h1 style="font-size:1.5rem;color:var(--primary-color);margin-top:1rem;">Meeting Reservation System</h1>
     </div>
     
     <div class="verification-card">
@@ -175,10 +230,14 @@
         </button>
         
         <div>
-          <a href="#" class="resend-link" id="resendLink">Resend verification code</a>
-          <div class="countdown" id="countdownTimer" style="display: none;">Resend in <span id="countdownSeconds">60</span>s</div>
+          <a href="#" class="resend-link" id="resendLink"><i class="fas fa-paper-plane" style="margin-right:0.3rem;"></i>Resend verification code</a>
+          <div class="countdown" id="countdownTimer" style="display: none;"><i class="fas fa-clock" style="margin-right:0.3rem;"></i>Resend in <span id="countdownSeconds">60</span>s</div>
         </div>
       </form>
+      
+      <div style="margin-top: 2rem; text-align: center;">
+        <a href="login.html" style="color: var(--primary-color); text-decoration: none; display:inline-flex; align-items:center;"><i class="fas fa-arrow-left" style="margin-right:0.5rem;"></i>Return to Login</a>
+      </div>
     </div>
   </div>
   
@@ -196,7 +255,23 @@
         const [username, domain] = email.split('@');
         emailDisplay.textContent = username + '@' + domain.replace(/^[^.]+\./, '...');
       }
+      
+      // 处理OTP输入聚焦和自动跳转
+      const otpInputs = document.querySelectorAll('.otp-input');
+      otpInputs.forEach((input, index) => {
+        input.addEventListener('keyup', function(e) {
+          // 如果输入了内容，跳转到下一个输入框
+          if (this.value.length === 1 && index < otpInputs.length - 1) {
+            otpInputs[index + 1].focus();
+          }
+          
+          // 如果按退格键，跳转到上一个输入框
+          if (e.key === 'Backspace' && this.value.length === 0 && index > 0) {
+            otpInputs[index - 1].focus();
+          }
+        });
+      });
     });
   </script>
 </body>
-</html> 
+</html>

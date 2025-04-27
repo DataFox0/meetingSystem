@@ -12,7 +12,7 @@ public class AdminActionLog {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "admin_id", nullable = false)
+    @JoinColumn(name = "admin_id", nullable = true)
     private Admin admin;
 
     @Column(name = "action_type", nullable = false)

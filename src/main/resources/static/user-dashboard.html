@@ -4,59 +4,848 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Dashboard - Meeting Reservation System</title>
+    <link rel="stylesheet" href="css/modern-styles.css">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/room-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            border-radius: 10px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dashboard-header h2 {
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            font-size: 1.8rem;
+        }
+        
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-right: 0;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-icon i {
+            font-size: 1.5rem;
+            color: #3498db;
+        }
+        
+        .stat-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .stat-content h3 {
+            margin: 0 0 0.25rem 0;
+            font-size: 1.5rem;
+            color: #2c3e50;
+        }
+        
+        .stat-content p {
+            margin: 0;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .dashboard-sections {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 0.75rem;
+            color: #3498db;
+        }
+        
+        .upcoming-reservations {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .reservation-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .reservation-item {
+            padding: 1rem;
+            border-radius: 8px;
+            background: #f8f9fa;
+            display: flex;
+            transition: transform 0.3s;
+        }
+        
+        .reservation-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .reservation-date {
+            min-width: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #3498db;
+            color: white;
+            border-radius: 6px;
+            padding: 0.5rem;
+            margin-right: 1rem;
+        }
+        
+        .date-day {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        
+        .date-month {
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        
+        .reservation-details {
+            flex-grow: 1;
+        }
+        
+        .reservation-room {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: #2c3e50;
+        }
+        
+        .reservation-time {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-bottom: 0.25rem;
+        }
+        
+        .reservation-purpose {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+        
+        .quick-actions {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .action-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .action-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-radius: 8px;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .action-item:hover {
+            background: #e8f1f8;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .action-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #3498db;
+            color: white;
+            border-radius: 50%;
+            margin-right: 1rem;
+        }
+        
+        .action-text {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .recent-rooms {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+        
+        .room-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .room-card {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            background: white;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .room-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .room-image {
+            height: 150px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .room-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .room-card:hover .room-image img {
+            transform: scale(1.05);
+        }
+        
+        .room-capacity {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background: rgba(44, 62, 80, 0.8);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .room-capacity i {
+            margin-right: 0.35rem;
+        }
+        
+        .room-content {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        
+        .room-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0 0 0.5rem 0;
+            color: #2c3e50;
+        }
+        
+        .room-location {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        
+        .room-location i {
+            margin-right: 0.35rem;
+            color: #3498db;
+        }
+        
+        .room-actions {
+            margin-top: auto;
+            padding-top: 0.75rem;
+            border-top: 1px solid #f5f5f5;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            border: none;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        
+        .btn-secondary {
+            background: #f5f7f9;
+            color: #34495e;
+        }
+        
+        .btn-secondary:hover {
+            background: #e8f1f8;
+        }
+        
+        .btn i {
+            margin-right: 0.35rem;
+        }
+        
+        .empty-state {
+            padding: 2rem;
+            text-align: center;
+            color: #7f8c8d;
+        }
+        
+        .empty-state i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #bdc3c7;
+        }
+        
+        .empty-state h3 {
+            margin-top: 0;
+            color: #34495e;
+        }
+        
+        .loading {
+            padding: 2rem;
+            text-align: center;
+            color: #7f8c8d;
+        }
+        
+        .loading i {
+            margin-right: 0.5rem;
+        }
+        
+        @media (max-width: 992px) {
+            .dashboard-sections {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* 用于空状态的按钮样式 */
+        .empty-state .btn-primary {
+            margin-top: 15px; /* 向下移动按钮 */
+            padding: 0.5rem 1rem; /* 缩小按钮尺寸 */
+            font-size: 0.9rem; /* 稍微缩小文字 */
+            display: inline-flex; /* 使用flex布局对齐元素 */
+            align-items: center; /* 垂直居中所有元素 */
+            justify-content: center; /* 水平居中 */
+        }
+        
+        .empty-state .btn-primary i {
+            margin-right: 8px;
+            font-size: 0.9rem;
+            /* 移除垂直对齐设置，让flex布局处理对齐 */
+        }
+        
+        /* 确保统计卡片数字居中 */
+        .stat-card {
+            flex-direction: column;
+            text-align: center;
+            justify-content: center;
+        }
+        
+        .stat-icon {
+            margin: 0 auto 1rem auto;
+        }
+        
+        .stat-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .stat-content h3 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* 更新会议状态标签样式 */
+        .reservation-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-top: 5px;
+        }
+        
+        .status-upcoming {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-past {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-cancelled {
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
+        
+        /* 查看全部按钮样式 */
+        .view-all-button {
+            display: block;
+            text-align: center;
+            margin-top: 16px;
+            padding: 8px 16px;
+            background-color: #f8f9fa;
+            color: #3498db;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .view-all-button:hover {
+            background-color: #e9ecef;
+        }
+        
+        .view-all-button i {
+            margin-left: 8px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>User Dashboard</h1>
-            <nav id="navBar">
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="user-dashboard.html" class="active">Dashboard</a></li>
-                    <li><a href="profile.html">My Profile</a></li>
-                    <li><a href="meeting-rooms.html">Meeting Rooms</a></li>
-                    <li><a href="my-reservations.html">My Reservations</a></li>
-                    <li><a href="#" id="logoutBtn">Logout</a></li>
-                </ul>
-            </nav>
+        <header class="site-header modern-navbar">
+            <div class="header-container">
+                <div class="site-logo">
+                    <img src="images/logo.svg" alt="Meeting Reservation System Logo" style="height:40px;">
+                    <h1 class="logo-title">Meeting System</h1>
+                </div>
+                <nav>
+                    <ul class="nav-menu">
+                        <li class="nav-item"><a href="user-dashboard.html" class="nav-link active">Dashboard</a></li>
+                        <li class="nav-item"><a href="meeting-rooms.html" class="nav-link">Meeting Rooms</a></li>
+                        <li class="nav-item"><a href="my-reservations.html" class="nav-link">My Reservations</a></li>
+                        <li class="nav-item"><a href="profile.html" class="nav-link">Profile</a></li>
+                        <li class="nav-item"><a href="#" id="logoutBtn" class="nav-link">Logout</a></li>
+                    </ul>
+                </nav>
+            </div>
         </header>
 
         <main>
             <section class="dashboard-header">
-                <h2>Welcome, <span id="username"></span></h2>
-                <p>Here you can manage your meeting reservations.</p>
+                <h2>Welcome, <span id="userName">User</span>!</h2>
+                <p>Here's your meeting room reservation overview</p>
             </section>
             
-            <section class="dashboard-content">
-                <div class="card">
-                    <h3>My Profile</h3>
-                    <p>View and edit your profile information.</p>
-                    <a href="profile.html" class="btn">Go to Profile</a>
+            <section class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="activeReservations">0</h3>
+                        <p>Active Reservations</p>
+                    </div>
                 </div>
                 
-                <div class="card">
-                    <h3>Meeting Rooms</h3>
-                    <p>Browse and book meeting rooms.</p>
-                    <a href="meeting-rooms.html" class="btn">View Rooms</a>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="todayReservations">0</h3>
+                        <p>Today's Meetings</p>
+                    </div>
                 </div>
                 
-                <div class="card">
-                    <h3>My Reservations</h3>
-                    <p>View and manage your reservations.</p>
-                    <a href="my-reservations.html" class="btn">View Reservations</a>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="pastReservations">0</h3>
+                        <p>Past Reservations</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="dashboard-sections">
+                <div class="upcoming-reservations">
+                    <h3 class="section-title">
+                        <i class="fas fa-calendar"></i> Upcoming Reservations
+                    </h3>
+                    <div class="reservation-list" id="upcomingReservationsList">
+                        <!-- Reservations will be loaded dynamically -->
+                        <div class="loading">
+                            <i class="fas fa-spinner fa-spin"></i> Loading your upcoming reservations...
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quick-actions">
+                    <h3 class="section-title">
+                        <i class="fas fa-bolt"></i> Quick Actions
+                    </h3>
+                    <div class="action-list">
+                        <a href="meeting-rooms.html" class="action-item">
+                            <div class="action-icon">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div class="action-text">Find a Meeting Room</div>
+                        </a>
+                        
+                        <a href="my-reservations.html" class="action-item">
+                            <div class="action-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="action-text">View All Reservations</div>
+                        </a>
+                        
+                        <a href="profile.html" class="action-item">
+                            <div class="action-icon">
+                                <i class="fas fa-user-cog"></i>
+                            </div>
+                            <div class="action-text">Edit Profile</div>
+                        </a>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="recent-rooms">
+                <h3 class="section-title">
+                    <i class="fas fa-door-open"></i> Popular Meeting Rooms
+                </h3>
+                <div class="room-grid" id="popularRoomsGrid">
+                    <!-- Rooms will be loaded dynamically -->
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i> Loading popular rooms...
+                    </div>
                 </div>
             </section>
         </main>
 
-        <footer>
-            <p>&copy; 2025 Meeting Reservation System</p>
+        <footer class="site-footer">
+            <div class="footer-content">
+                <p class="footer-text">&copy; 2025 Meeting Reservation System. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="privacy-policy.html" class="footer-link">Privacy Policy</a>
+                    <a href="terms-of-service.html" class="footer-link">Terms of Service</a>
+                    <a href="contact.html" class="footer-link">Contact Us</a>
+                </div>
+            </div>
         </footer>
     </div>
 
     <script src="js/api.js"></script>
     <script src="js/script.js"></script>
-    <script src="js/user-dashboard.js"></script>
     <script src="js/nav-bar.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查用户是否已登录
+            if (!authStorage.isAuthenticated()) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // 获取用户名
+            const { username } = authStorage.getAuth();
+            document.getElementById('userName').textContent = username;
+            
+            // 加载仪表盘数据
+            loadDashboardData();
+        });
+        
+        function loadDashboardData() {
+            // 获取用户的预订信息
+            const { token } = authStorage.getAuth();
+            
+            // 显示加载中状态
+            document.getElementById('activeReservations').innerHTML = '<small><i class="fas fa-spinner fa-spin"></i></small>';
+            document.getElementById('todayReservations').innerHTML = '<small><i class="fas fa-spinner fa-spin"></i></small>';
+            document.getElementById('pastReservations').innerHTML = '<small><i class="fas fa-spinner fa-spin"></i></small>';
+            
+            reservationApi.getUserReservations(token)
+                .then(reservations => {
+                    const now = new Date();
+                    
+                    // 计算活动预订数量 (未来的且未取消的)
+                    const activeReservations = reservations.filter(reservation => 
+                        new Date(`${reservation.date}T${reservation.endTime}`) > now && 
+                        reservation.status !== 'CANCELLED'
+                    );
+                    
+                    // 计算今日预订数量
+                    const today = new Date();
+                    const todayString = today.toISOString().split('T')[0]; // YYYY-MM-DD
+                    const todayReservations = reservations.filter(reservation => 
+                        reservation.date === todayString && 
+                        reservation.status !== 'CANCELLED'
+                    );
+                    
+                    // 计算过去预订数量
+                    const pastReservations = reservations.filter(reservation => 
+                        new Date(`${reservation.date}T${reservation.endTime}`) < now || 
+                        reservation.status === 'CANCELLED'
+                    );
+                    
+                    // 更新统计数据
+                    document.getElementById('activeReservations').textContent = activeReservations.length;
+                    document.getElementById('todayReservations').textContent = todayReservations.length;
+                    document.getElementById('pastReservations').textContent = pastReservations.length;
+                    
+                    // 加载最近的预订（不过滤状态，让函数内部处理）
+                    loadUpcomingReservations(reservations);
+                    
+                    // 加载热门会议室
+                    loadPopularRooms();
+                })
+                .catch(error => {
+                    console.error('Error loading dashboard data:', error);
+                    // 设置为0
+                    document.getElementById('activeReservations').textContent = '0';
+                    document.getElementById('todayReservations').textContent = '0';
+                    document.getElementById('pastReservations').textContent = '0';
+                    
+                    // 继续加载其他内容
+                    loadUpcomingReservations([]);
+                    loadPopularRooms();
+                });
+        }
+        
+        function loadUpcomingReservations(reservations) {
+            const reservationsList = document.getElementById('upcomingReservationsList');
+            
+            if (!reservations || !Array.isArray(reservations)) {
+                const { token } = authStorage.getAuth();
+                
+                reservationApi.getUserReservations(token)
+                    .then(reservations => {
+                        // 获取所有非Cancelled的预订，最多显示2个
+                        // 这里不预先过滤，因为我们要展示所有状态
+                        const reservationsToShow = reservations
+                            .sort((a, b) => new Date(`${a.date}T${a.startTime}`) - new Date(`${b.date}T${b.startTime}`))
+                            .slice(0, 2);
+                        
+                        displayUpcomingReservations(reservationsToShow);
+                    })
+                    .catch(error => {
+                        console.error('Error loading reservations:', error);
+                        reservationsList.innerHTML = `
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-circle"></i>
+                                Failed to load reservations. Please try again later.
+                            </div>
+                        `;
+                    });
+            } else {
+                // 如果已经有预订数据，直接显示前两个
+                displayUpcomingReservations(reservations.slice(0, 2));
+            }
+            
+            function displayUpcomingReservations(reservationsToShow) {
+                if (reservationsToShow.length === 0) {
+                    reservationsList.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-calendar-times"></i>
+                            <h3>No reservations</h3>
+                            <p>Book a meeting room to see your reservations here.</p>
+                            <a href="meeting-rooms.html" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Book a Room
+                            </a>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                reservationsList.innerHTML = '';
+                
+                reservationsToShow.forEach(reservation => {
+                    const date = new Date(reservation.date);
+                    const dayOfMonth = date.getDate();
+                    
+                    // 使用英文月份缩写
+                    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                                       'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    const month = monthNames[date.getMonth()];
+                    
+                    // 判断会议状态
+                    let statusClass = "status-upcoming";
+                    let statusText = "Upcoming";
+                    
+                    if (reservation.status === 'CANCELLED') {
+                        statusClass = "status-cancelled";
+                        statusText = "Cancelled";
+                    } else {
+                        const now = new Date();
+                        const reservationEndTime = new Date(`${reservation.date}T${reservation.endTime}`);
+                        
+                        if (reservationEndTime < now) {
+                            statusClass = "status-past";
+                            statusText = "Past";
+                        }
+                    }
+                    
+                    reservationsList.innerHTML += `
+                        <div class="reservation-item">
+                            <div class="reservation-date">
+                                <div class="date-day">${dayOfMonth}</div>
+                                <div class="date-month">${month}</div>
+                            </div>
+                            <div class="reservation-details">
+                                <div class="reservation-room">${reservation.roomName}</div>
+                                <div class="reservation-time">${reservation.startTime} - ${reservation.endTime}</div>
+                                <div class="reservation-purpose">${reservation.purpose || 'No purpose specified'}</div>
+                                <span class="reservation-status ${statusClass}">${statusText}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                // 添加"查看全部"按钮
+                reservationsList.innerHTML += `
+                    <a href="my-reservations.html" class="view-all-button">
+                        View all reservations <i class="fas fa-arrow-right"></i>
+                    </a>
+                `;
+            }
+        }
+        
+        function loadPopularRooms() {
+            const roomsGrid = document.getElementById('popularRoomsGrid');
+            
+            // 使用API加载数据
+            const { token } = authStorage.getAuth();
+            
+            roomApi.getAllRooms(token)
+                .then(rooms => {
+                    // 只显示前3个房间
+                    const popularRooms = rooms.slice(0, 3);
+                    
+                    if (popularRooms.length === 0) {
+                        roomsGrid.innerHTML = `
+                            <div class="empty-state">
+                                <i class="fas fa-door-closed"></i>
+                                <h3>No rooms available</h3>
+                                <p>Check back later for available meeting rooms.</p>
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    roomsGrid.innerHTML = '';
+                    
+                    popularRooms.forEach(room => {
+                        roomsGrid.innerHTML += `
+                            <div class="room-card">
+                                <div class="room-image">
+                                    <img src="${room.imageUrl || 'images/default-room.jpg'}" alt="${room.name}">
+                                    <div class="room-capacity">
+                                        <i class="fas fa-users"></i> ${room.capacity}
+                                    </div>
+                                </div>
+                                <div class="room-content">
+                                    <h3 class="room-name">${room.name}</h3>
+                                    <div class="room-location">
+                                        <i class="fas fa-map-marker-alt"></i> ${room.location}
+                                    </div>
+                                    <div class="room-description">
+                                        ${room.description || 'No description available'}
+                                    </div>
+                                    <div class="room-actions">
+                                        <a href="room-detail.html?id=${room.id}" class="btn btn-secondary">
+                                            <i class="fas fa-info-circle"></i> Details
+                                        </a>
+                                        <a href="room-detail.html?id=${room.id}&book=true" class="btn btn-primary">
+                                            <i class="fas fa-calendar-plus"></i> Reserve
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading rooms:', error);
+                    roomsGrid.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle"></i>
+                            Failed to load rooms. Please try again later.
+                        </div>
+                    `;
+                });
+        }
+    </script>
 </body>
 </html>

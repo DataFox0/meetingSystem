@@ -163,7 +163,7 @@ const adminApi = {
     },
     
     // 预订管理
-    getAllReservations: (roomId, status) => {
+    getAllReservations: (roomId = null, status = null) => {
         const { token } = authStorage.getAuth();
         let url = '/admin/reservations';
         
@@ -176,7 +176,21 @@ const adminApi = {
             url += '?' + params.join('&');
         }
         
-        return apiCall(url, 'GET', null, token);
+        console.log("预订API URL:", url);
+        
+        return apiCall(url, 'GET', null, token)
+            .then(response => {
+                console.log("预订API响应:", response);
+                // 处理可能的空响应
+                if (!response) return [];
+                // 响应可能已经是数组或者有可能有content属性
+                return Array.isArray(response) ? response : 
+                       (response.content ? response.content : []);
+            })
+            .catch(error => {
+                console.error("加载预订时出错:", error);
+                return []; // 返回空数组而不是抛出错误，防止页面崩溃
+            });
     },
     deleteReservation: (reservationId) => {
         const { token } = authStorage.getAuth();
@@ -188,9 +202,79 @@ const adminApi = {
     },
     
     // 用户管理
-    getAllUsers: () => {
+    getAllUsers: (page = 0, size = 10, search = '') => {
         const { token } = authStorage.getAuth();
-        return apiCall('/admin/users', 'GET', null, token);
+        let url = `/admin/users?page=${page}&size=${size}`;
+        if (search) {
+            url += `&search=${encodeURIComponent(search)}`;
+        }
+        
+        console.log("请求用户数据URL:", url);
+        
+        return apiCall(url, 'GET', null, token)
+            .then(response => {
+                console.log("原始用户数据响应:", response);
+                
+                // 处理不同格式的响应
+                if (!response) {
+                    return {
+                        content: [],
+                        totalPages: 0
+                    };
+                }
+                
+                if (Array.isArray(response)) {
+                    return {
+                        content: response,
+                        totalPages: 1
+                    };
+                }
+                
+                if (!response.content && response.users) {
+                    return {
+                        content: response.users,
+                        totalPages: response.totalPages || 1
+                    };
+                }
+                
+                if (!response.content) {
+                    // 如果response是单个用户对象或其他格式
+                    const isUserObject = response.id && (response.username || response.email);
+                    if (isUserObject) {
+                        return {
+                            content: [response],
+                            totalPages: 1
+                        };
+                    }
+                    
+                    // 其他未知格式，创建空结果
+                    return {
+                        content: [],
+                        totalPages: 0
+                    };
+                }
+                
+                return response;
+            });
+    },
+    getUserById: (userId) => {
+        const { token } = authStorage.getAuth();
+        return apiCall(`/admin/users/${userId}`, 'GET', null, token);
+    },
+    getUserReservations: (userId) => {
+        const { token } = authStorage.getAuth();
+        return apiCall(`/admin/users/${userId}/reservations`, 'GET', null, token)
+            .then(response => {
+                // 处理可能的空响应
+                if (!response) return [];
+                // 响应可能已经是数组或者有可能有content属性
+                return Array.isArray(response) ? response : 
+                       (response.content ? response.content : []);
+            })
+            .catch(error => {
+                console.error("加载用户预订时出错:", error);
+                return []; // 返回空数组而不是抛出错误，防止页面崩溃
+            });
     },
     lockUser: (userId) => {
         const { token } = authStorage.getAuth();
@@ -212,6 +296,6 @@ const adminApi = {
     },
     getRecentActivity: () => {
         const { token } = authStorage.getAuth();
-        return apiCall('/admin/dashboard/activity', 'GET', null, token);
+        return apiCall('/admin/activity', 'GET', null, token);
     }
 };
