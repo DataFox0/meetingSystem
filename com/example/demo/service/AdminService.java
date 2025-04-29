@@ -37,5 +37,5 @@ public void deleteUser(Long userId) {
     System.out.println("Deleted user: " + username);
     
     // 使用保存的用户名而不是用户对象
-    logAdminActionAfterCommit("删除用户", username);
+    logAdminActionAfterCommit("Delete user", username);
 } 

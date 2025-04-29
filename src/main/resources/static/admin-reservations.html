@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .admin-header {
-            background: linear-gradient(135deg, #2c3e50, #3498db);
+            background: linear-gradient(135deg, #93B5FF, #C5D4FF);
             color: white;
             border-radius: 10px;
             padding: 1.5rem;
@@ -287,7 +287,7 @@
             <div class="header-container">
                 <div class="site-logo">
                     <!-- <i class="fas fa-calendar-check" style="font-size: 32px; color: #3498db;"></i> -->
-                    <img src="images/systemIcon.png" alt="Meeting Reservation System Logo" style="height:80px;">
+                    <img src="images/systemIcon.svg" alt="Meeting Reservation System Logo" style="height:80px;">
                     <!-- <h1 class="logo-title">Admin Dashboard</h1> -->
                 </div>
                 <nav>
@@ -512,11 +512,11 @@
     function loadRoomOptions() {
         adminApi.getAllRooms()
             .then(rooms => {
-                console.log("加载到的会议室:", rooms);
+                console.log("Meeting rooms loaded:", rooms);
                 const roomSelect = document.getElementById('roomFilter');
                 
                 if (!rooms || !Array.isArray(rooms) || rooms.length === 0) {
-                    console.log("没有找到会议室或数据格式不正确");
+                    console.log("Meeting room not found or data format incorrect");
                     return;
                 }
                 
@@ -528,7 +528,7 @@
                 });
             })
             .catch(error => {
-                console.error('加载会议室选项时出错:', error);
+                console.error('Error loading meeting room options:', error);
             });
     }
 
@@ -584,7 +584,7 @@
             tableBody.innerHTML = '';
             
             if (reservations.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="9" class="text-center">没有找到预订记录</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="9" class="text-center">No booking record found</td></tr>';
                 return;
             }
             
@@ -629,8 +629,8 @@
             setupReservationEventListeners();
         })
         .catch(error => {
-            console.error('加载预订数据时出错:', error);
-            tableBody.innerHTML = `<tr><td colspan="9" class="text-center text-danger"><i class="fas fa-exclamation-circle"></i> 加载数据失败: ${error.message}</td></tr>`;
+            console.error('Error loading booking data:', error);
+            tableBody.innerHTML = `<tr><td colspan="9" class="text-center text-danger"><i class="fas fa-exclamation-circle"></i> Data loading failed: ${error.message}</td></tr>`;
         });
     }
 
@@ -683,7 +683,7 @@
         const reservation = window.allReservations.find(r => r.id == reservationId);
         
         if (!reservation) {
-            alert('找不到预订信息');
+            alert('Unable to find booking information');
             return;
         }
         
@@ -705,8 +705,8 @@
             .map(([id]) => id);
         
         if (missingElements.length > 0) {
-            console.error('找不到以下元素：', missingElements);
-            alert(`模态框中缺少必要元素: ${missingElements.join(', ')}`);
+            console.error('The following elements cannot be found:', missingElements);
+            alert(`Missing necessary elements in modal box: ${missingElements.join(', ')}`);
             return;
         }
         
@@ -750,8 +750,8 @@
         if (modal) {
             modal.style.display = 'block';
         } else {
-            console.error('找不到预订详情模态框');
-            alert('无法显示预订详情：模态框元素不存在');
+            console.error('Cannot find booking details modal box');
+            alert('Unable to display booking details: Modal box element does not exist');
         }
     }
 
@@ -780,18 +780,18 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('删除预订失败');
+                    throw new Error('Failed to delete reservation');
                 }
                 return response.text();
             })
             .then(() => {
-                alert('预订已成功删除');
+                alert('The reservation has been successfully deleted');
                 document.getElementById('deleteConfirmModal').style.display = 'none';
                 loadReservations(); // 重新加载预订列表
             })
             .catch(error => {
-                console.error('删除预订时出错:', error);
-                alert(`删除预订失败: ${error.message}`);
+                console.error('Error deleting reservation:', error);
+                alert(`Failed to delete reservation: ${error.message}`);
             });
         } else {
             // 批量删除预订
@@ -805,18 +805,18 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('批量删除预订失败');
+                    throw new Error('Batch deletion of reservations failed');
                 }
                 return response.text();
             })
             .then(() => {
-                alert(`已成功删除 ${reservationIds.length} 个预订`);
+                alert(`Successfully deleted ${reservationIds.length} bookings`);
                 document.getElementById('deleteConfirmModal').style.display = 'none';
                 loadReservations(); // 重新加载预订列表
             })
             .catch(error => {
-                console.error('批量删除预订时出错:', error);
-                alert(`批量删除预订失败: ${error.message}`);
+                console.error('Error deleting bookings in bulk:', error);
+                alert(`Batch deletion of reservations failed: ${error.message}`);
             });
         }
     }
