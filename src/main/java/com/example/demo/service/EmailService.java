@@ -28,7 +28,7 @@ public class EmailService {
         helper.setSubject("Email Verification");
         
         String content = "<p>Please click on the link below to verify your email:</p>"
-                + "<a href='http://localhost:8080/verify-email.html?token=" + token + "'>Verify email</a>";
+                + "<a href='http://121.40.73.249:8080/verify-email.html?token=" + token + "'>Verify email</a>";
         //localhost:8080; 121.40.73.249:8080
         helper.setText(content, true);
         
@@ -44,7 +44,7 @@ public class EmailService {
         helper.setSubject("Password Reset Request");
         
         String content = "<p>Please click the link below to reset your password:</p>"
-                + "<a href='http://localhost:8080/reset-password.html?token=" + token + "'>Reset Password</a>";
+                + "<a href='http://121.40.73.249:8080/reset-password.html?token=" + token + "'>Reset Password</a>";
         //localhost:8080; 121.40.73.249:8080
         helper.setText(content, true);
         
